@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoubleFinder – Register</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #F4A300;
+      --turmeric: #E8820C;
+      --cream: #FFF8EC;
+      --dark: #0E1A14;
+      --card-bg: #132018;
+      --text-muted: #7A8C82;
+      --error: #C0392B;
+      --success: #27AE60;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background: var(--dark); color: var(--cream); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    .page-bg { position: fixed; inset: 0; background: radial-gradient(ellipse at 80% 30%, rgba(244,163,0,0.07) 0%, transparent 50%), radial-gradient(ellipse at 10% 70%, rgba(45,106,79,0.12) 0%, transparent 50%); pointer-events: none; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; border-bottom: 1px solid rgba(244,163,0,0.1); position: relative; z-index: 10; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: var(--saffron); text-decoration: none; }
+    .logo span { color: var(--cream); }
+    .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1.5rem; position: relative; }
+    .auth-card { width: 100%; max-width: 460px; background: var(--card-bg); border: 1px solid rgba(244,163,0,0.12); border-radius: 4px; padding: 2.5rem; animation: slideUp 0.4s ease; }
+    @keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+    .auth-header { text-align: center; margin-bottom: 2rem; }
+    .auth-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 2px; }
+    .auth-header h1 span { color: var(--saffron); }
+    .auth-header p { color: var(--text-muted); font-size: 0.88rem; margin-top: 0.4rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { margin-bottom: 1.1rem; }
+    label { display: block; font-family: 'Syne', sans-serif; font-size: 0.73rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.45rem; }
+    input[type="text"], input[type="email"], input[type="password"] { width: 100%; background: rgba(255,248,236,0.05); border: 1px solid rgba(244,163,0,0.18); border-radius: 3px; color: var(--cream); padding: 0.8rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s, background 0.2s; }
+    input:focus { border-color: var(--saffron); background: rgba(244,163,0,0.04); }
+    input.error { border-color: var(--error); }
+    .input-hint { font-size: 0.73rem; margin-top: 0.3rem; color: var(--error); display: none; }
+    .input-hint.visible { display: block; }
+
+    .password-strength { margin-top: 0.4rem; }
+    .strength-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.08); margin-bottom: 0.2rem; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 2px; width: 0%; transition: width 0.3s, background 0.3s; }
+    .strength-label { font-size: 0.7rem; color: var(--text-muted); font-family: 'Syne', sans-serif; }
+
+    .terms { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 1.4rem; cursor: pointer; }
+    .terms input { accent-color: var(--saffron); margin-top: 2px; flex-shrink: 0; }
+    .terms span { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+    .terms a { color: var(--saffron); }
+
+    .btn-submit { width: 100%; background: var(--saffron); color: var(--dark); font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 1rem; border-radius: 3px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(244,163,0,0.25); }
+    .btn-submit:hover { background: var(--turmeric); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .auth-switch { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); }
+    .auth-switch a { color: var(--saffron); text-decoration: none; font-weight: 600; font-family: 'Syne', sans-serif; }
+    .alert { border-radius: 3px; padding: 0.8rem 1rem; margin-bottom: 1rem; font-size: 0.85rem; font-family: 'Syne', sans-serif; font-weight: 600; display: none; }
+    .alert.success { background: rgba(39,174,96,0.12); border: 1px solid rgba(39,174,96,0.3); color: #27AE60; display: block; }
+    .alert.error-alert { background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.3); color: var(--error); display: block; }
+
+    @media(max-width:480px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <nav>
+    <a href="index.html" class="logo">Double<span>Finder</span></a>
+    <a href="login.html" style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--saffron);text-decoration:none;">Already have an account? →</a>
+  </nav>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Join <span>DoubleFinder</span></h1>
+        <p>Create your account and start finding the best doubles</p>
+      </div>
+
+      <div id="alert-msg" class="alert"></div>
+
+      <form id="reg-form" onsubmit="handleRegister(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="fname" placeholder="John"/>
+            <div class="input-hint" id="fname-hint">Required</div>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lname" placeholder="Doe"/>
+            <div class="input-hint" id="lname-hint">Required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="username" placeholder="doublesking99" autocomplete="username"/>
+          <div class="input-hint" id="username-hint">Username must be at least 3 characters</div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@mail.com" autocomplete="email"/>
+          <div class="input-hint" id="email-hint">Enter a valid email address</div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" oninput="checkStrength()"/>
+          <div class="password-strength">
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+            <div class="strength-label" id="strength-label">Enter a password</div>
+          </div>
+          <div class="input-hint" id="password-hint">Password must be at least 6 characters</div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password"/>
+          <div class="input-hint" id="confirm-hint">Passwords do not match</div>
+        </div>
+        <label class="terms">
+          <input type="checkbox" id="terms-check"/>
+          <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+        </label>
+        <button type="submit" class="btn-submit" id="submit-btn">Create Account</button>
+      </form>
+
+      <div class="auth-switch">Already have an account? <a href="login.html">Log in</a></div>
+    </div>
+  </div>
+
+  <script>
+    function checkStrength() {
+      const p = document.getElementById('password').value;
+      const fill = document.getElementById('strength-fill');
+      const label = document.getElementById('strength-label');
+      let score = 0;
+      if (p.length >= 6) score++;
+      if (p.length >= 10) score++;
+      if (/[A-Z]/.test(p)) score++;
+      if (/[0-9]/.test(p)) score++;
+      if (/[^a-zA-Z0-9]/.test(p)) score++;
+      const pct = (score / 5) * 100;
+      const colors = ['#C0392B','#E8820C','#F4A300','#27AE60','#27AE60'];
+      const labels = ['Too weak','Weak','Fair','Strong','Very strong'];
+      fill.style.width = pct + '%';
+      fill.style.background = colors[Math.max(0,score-1)];
+      label.textContent = score === 0 ? 'Enter a password' : labels[Math.max(0,score-1)];
+      label.style.color = score === 0 ? '#7A8C82' : colors[Math.max(0,score-1)];
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      clearErrors();
+      const fname = document.getElementById('fname').value.trim();
+      const lname = document.getElementById('lname').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm').value;
+      const terms = document.getElementById('terms-check').checked;
+      let valid = true;
+
+      if (!fname) { showHint('fname','fname-hint'); valid = false; }
+      if (!lname) { showHint('lname','lname-hint'); valid = false; }
+      if (username.length < 3) { showHint('username','username-hint'); valid = false; }
+      if (!email.includes('@')) { showHint('email','email-hint'); valid = false; }
+      if (password.length < 6) { showHint('password','password-hint'); valid = false; }
+      if (password !== confirm) { showHint('confirm','confirm-hint'); valid = false; }
+      if (!terms) { showAlert('error-alert','Please accept the terms to continue'); valid = false; }
+      if (!valid) return;
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true; btn.textContent = 'Creating account…';
+
+      setTimeout(() => {
+        const user = { name: fname + ' ' + lname, username, email };
+        localStorage.setItem('df_user', JSON.stringify(user));
+        showAlert('success','✓ Account created! Redirecting to your profile…');
+        setTimeout(() => window.location.href = 'profile.html', 1200);
+      }, 900);
+    }
+
+    function showHint(inputId, hintId) {
+      document.getElementById(inputId).classList.add('error');
+      document.getElementById(hintId).classList.add('visible');
+    }
+    function clearErrors() {
+      document.querySelectorAll('input').forEach(i => i.classList.remove('error'));
+      document.querySelectorAll('.input-hint').forEach(h => h.classList.remove('visible'));
+      document.getElementById('alert-msg').className = 'alert';
+    }
+    function showAlert(type, msg) {
+      const el = document.getElementById('alert-msg');
+      el.className = `alert ${type}`; el.textContent = msg;
+    }
+    if (localStorage.getItem('df_user')) window.location.href = 'profile.html';
+  </script>
+</body>
+</html>

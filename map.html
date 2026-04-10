@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoubleFinder – Map</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #F4A300;
+      --turmeric: #E8820C;
+      --pepper-red: #C0392B;
+      --deep-green: #1A3A2A;
+      --leaf: #2D6A4F;
+      --cream: #FFF8EC;
+      --dark: #0E1A14;
+      --card-bg: #132018;
+      --text-muted: #7A8C82;
+      --open-green: #27AE60;
+      --closed-red: #C0392B;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background: var(--dark); color: var(--cream); font-family: 'DM Sans', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 2rem;
+      background: rgba(14,26,20,0.95);
+      border-bottom: 1px solid rgba(244,163,0,0.15);
+      flex-shrink: 0; z-index: 200;
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--saffron); text-decoration: none; }
+    .logo span { color: var(--cream); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; align-items: center; }
+    nav ul a { color: var(--cream); text-decoration: none; font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    nav ul a:hover, nav ul a.active { color: var(--saffron); }
+    .btn-nav { background: var(--saffron); color: var(--dark) !important; padding: 0.45rem 1.2rem; border-radius: 2px; }
+
+    /* LAYOUT */
+    .app-body { display: flex; flex: 1; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 360px; flex-shrink: 0;
+      background: var(--card-bg);
+      border-right: 1px solid rgba(244,163,0,0.1);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(244,163,0,0.1); }
+    .search-bar {
+      display: flex; gap: 0.5rem; margin-bottom: 0.8rem;
+    }
+    .search-bar input {
+      flex: 1;
+      background: rgba(255,248,236,0.07);
+      border: 1px solid rgba(244,163,0,0.2);
+      border-radius: 3px;
+      color: var(--cream); padding: 0.65rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .search-bar input:focus { border-color: var(--saffron); }
+    .search-bar input::placeholder { color: var(--text-muted); }
+    .search-bar button {
+      background: var(--saffron); border: none; border-radius: 3px;
+      color: var(--dark); padding: 0 1rem; cursor: pointer;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover { background: var(--turmeric); }
+    .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .filter-chip {
+      font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 0.3rem 0.85rem; border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+      border: 1px solid rgba(244,163,0,0.2);
+      color: var(--text-muted);
+      background: transparent;
+    }
+    .filter-chip.active { background: var(--saffron); color: var(--dark); border-color: var(--saffron); }
+    .filter-chip:hover:not(.active) { border-color: var(--saffron); color: var(--cream); }
+
+    .results-label {
+      padding: 0.7rem 1.5rem;
+      font-family: 'Syne', sans-serif; font-size: 0.72rem;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(244,163,0,0.06);
+    }
+
+    .vendor-list { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+    .vendor-list::-webkit-scrollbar { width: 4px; }
+    .vendor-list::-webkit-scrollbar-track { background: transparent; }
+    .vendor-list::-webkit-scrollbar-thumb { background: rgba(244,163,0,0.2); border-radius: 2px; }
+
+    .vendor-card {
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-bottom: 1px solid rgba(244,163,0,0.06);
+      position: relative;
+    }
+    .vendor-card:hover, .vendor-card.selected { background: rgba(244,163,0,0.06); }
+    .vendor-card.selected::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--saffron);
+    }
+    .vendor-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem; }
+    .vendor-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; }
+    .status-dot {
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.7rem; font-family: 'Syne', sans-serif;
+      font-weight: 600; letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .status-dot::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.open { color: var(--open-green); }
+    .status-dot.open::before { background: var(--open-green); box-shadow: 0 0 0 0 rgba(39,174,96,0.4); }
+    .status-dot.closed { color: var(--closed-red); }
+    .status-dot.closed::before { background: var(--closed-red); animation: none; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(39,174,96,0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(39,174,96,0); }
+      100% { box-shadow: 0 0 0 0 rgba(39,174,96,0); }
+    }
+    .vendor-address { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .vendor-meta { display: flex; gap: 1rem; align-items: center; }
+    .stars { color: var(--saffron); font-size: 0.8rem; }
+    .rating-count { color: var(--text-muted); font-size: 0.75rem; }
+    .distance { color: var(--text-muted); font-size: 0.75rem; margin-left: auto; }
+    .fav-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 1rem; transition: transform 0.2s;
+      padding: 0;
+    }
+    .fav-btn:hover { transform: scale(1.3); }
+
+    /* MAP */
+    #map { flex: 1; }
+
+    /* INFO PANEL (overlay on map) */
+    .info-panel {
+      position: absolute;
+      bottom: 1.5rem; right: 1.5rem;
+      width: 300px;
+      background: var(--card-bg);
+      border: 1px solid rgba(244,163,0,0.2);
+      border-radius: 4px;
+      padding: 1.5rem;
+      display: none;
+      z-index: 50;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .info-panel.visible { display: block; }
+    .info-close {
+      position: absolute; top: 0.8rem; right: 0.8rem;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1.1rem;
+    }
+    .info-status { margin-bottom: 0.8rem; }
+    .info-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .info-addr { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+    .info-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.4rem; }
+    .info-row span:first-child { color: var(--text-muted); }
+    .info-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .info-btn {
+      flex: 1; padding: 0.55rem 0;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.78rem; letter-spacing: 0.5px; text-transform: uppercase;
+      border-radius: 3px; cursor: pointer; border: none; transition: all 0.2s;
+      text-decoration: none; text-align: center;
+    }
+    .info-btn.primary { background: var(--saffron); color: var(--dark); }
+    .info-btn.primary:hover { background: var(--turmeric); }
+    .info-btn.secondary { background: rgba(244,163,0,0.1); color: var(--saffron); border: 1px solid rgba(244,163,0,0.3); }
+    .info-btn.secondary:hover { background: rgba(244,163,0,0.15); }
+
+    /* map container position */
+    .map-wrap { flex: 1; position: relative; }
+
+    /* toast */
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--card-bg); border: 1px solid rgba(244,163,0,0.3);
+      color: var(--cream); padding: 0.8rem 1.5rem;
+      border-radius: 3px; font-family: 'Syne', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      transition: transform 0.3s; z-index: 300;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 768px) {
+      .app-body { flex-direction: column; }
+      .sidebar { width: 100%; height: 240px; }
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">Double<span>Finder</span></a>
+    <ul>
+      <li><a href="map.html" class="active">Map</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
+      <li><a href="profile.html">Profile</a></li>
+      <li><a href="login.html" class="btn-nav">Log In</a></li>
+    </ul>
+  </nav>
+
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search vendors, areas…" oninput="filterVendors()"/>
+          <button onclick="locateMe()">📍 Me</button>
+        </div>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-chip" onclick="setFilter('open',this)">Open Now</button>
+          <button class="filter-chip" onclick="setFilter('top',this)">Top Rated</button>
+          <button class="filter-chip" onclick="setFilter('near',this)">Nearest</button>
+        </div>
+      </div>
+      <div class="results-label" id="results-label">Loading vendors…</div>
+      <div class="vendor-list" id="vendor-list"></div>
+    </aside>
+
+    <!-- MAP -->
+    <div class="map-wrap">
+      <div id="map"></div>
+
+      <!-- INFO PANEL -->
+      <div class="info-panel" id="info-panel">
+        <button class="info-close" onclick="closeInfo()">✕</button>
+        <div class="info-status" id="info-status"></div>
+        <div class="info-name" id="info-name"></div>
+        <div class="info-addr" id="info-addr"></div>
+        <div class="info-row"><span>Rating</span><span id="info-rating"></span></div>
+        <div class="info-row"><span>Hours</span><span id="info-hours"></span></div>
+        <div class="info-row"><span>Specialty</span><span id="info-specialty"></span></div>
+        <div class="info-row"><span>Distance</span><span id="info-dist"></span></div>
+        <div class="info-actions">
+          <a href="#" class="info-btn primary" id="info-directions" target="_blank">Directions</a>
+          <button class="info-btn secondary" onclick="favouriteVendor()">♥ Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Google Maps -->
+  <script>
+    const VENDORS = [
+      { id:1, name:"Sauce & Bara Central", lat:10.6549, lng:-61.5019, open:true, rating:4.8, reviews:312, address:"Charlotte St, Port of Spain", hours:"5:30AM – 11:00AM", specialty:"Full slight pepper", dist:"0.3 km" },
+      { id:2, name:"Chaguanas Doubles King", lat:10.5155, lng:-61.4115, open:true, rating:4.9, reviews:524, address:"Montrose Rd, Chaguanas", hours:"5:00AM – 10:30AM", specialty:"Extra channa", dist:"1.1 km" },
+      { id:3, name:"Fyzabad Road Doubles", lat:10.1597, lng:-61.5199, open:false, rating:4.5, reviews:187, address:"Southern Main Rd, Fyzabad", hours:"6:00AM – 12:00PM", specialty:"Mango slight", dist:"42 km" },
+      { id:4, name:"Maraval Morning Stop", lat:10.6724, lng:-61.5312, open:true, rating:4.7, reviews:220, address:"Maraval Rd, Port of Spain", hours:"5:00AM – 9:00AM", specialty:"No pepper", dist:"2.5 km" },
+      { id:5, name:"San Fernando Doubles Man", lat:10.2796, lng:-61.4590, open:true, rating:4.6, reviews:310, address:"Coffee St, San Fernando", hours:"5:30AM – 11:30AM", specialty:"Heavy pepper", dist:"26 km" },
+      { id:6, name:"Arima Junction Spot", lat:10.6366, lng:-61.2832, open:false, rating:4.3, reviews:98, address:"Arima Old Rd, Arima", hours:"6:30AM – 1:00PM", specialty:"Slight slight", dist:"18 km" },
+      { id:7, name:"Curepe Doubles Express", lat:10.6383, lng:-61.4044, open:true, rating:4.8, reviews:401, address:"Eastern Main Rd, Curepe", hours:"5:00AM – 10:00AM", specialty:"Slight pepper", dist:"8 km" },
+      { id:8, name:"Tunapuna Doubles Spot", lat:10.6408, lng:-61.3832, open:true, rating:4.7, reviews:275, address:"Main Rd, Tunapuna", hours:"5:30AM – 11:00AM", specialty:"Extra bara", dist:"12 km" },
+    ];
+
+    let map, markers = [], selectedId = null, activeFilter = 'all', userLocation = null;
+    let favourites = JSON.parse(localStorage.getItem('df_favs') || '[]');
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 10.5915, lng: -61.4085 },
+        zoom: 10,
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#1a2e23" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#0e1a14" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#7A8C82" }] },
+          { featureType: "water", elementType: "geometry", stylers: [{ color: "#0d2138" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#253d2e" }] },
+          { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#1a2e23" }] },
+          { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#2d5a3d" }] },
+          { featureType: "poi", elementType: "geometry", stylers: [{ color: "#1d3829" }] },
+          { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#6b9e7e" }] },
+        ]
+      });
+      renderAll();
+    }
+
+    function renderAll() {
+      markers.forEach(m => m.setMap(null));
+      markers = [];
+      const filtered = getFiltered();
+      document.getElementById('results-label').textContent = `${filtered.length} Vendor${filtered.length !== 1 ? 's' : ''} Found`;
+
+      const list = document.getElementById('vendor-list');
+      list.innerHTML = '';
+      filtered.forEach(v => {
+        // Marker
+        const icon = {
+          path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z',
+          fillColor: v.open ? '#F4A300' : '#7A8C82',
+          fillOpacity: 1,
+          strokeColor: v.open ? '#E8820C' : '#555',
+          strokeWeight: 1.5,
+          scale: 1.6,
+          anchor: new google.maps.Point(12, 22)
+        };
+        const marker = new google.maps.Marker({ position: { lat: v.lat, lng: v.lng }, map, icon, title: v.name });
+        marker.addListener('click', () => openInfo(v));
+        markers.push(marker);
+
+        // Card
+        const isFav = favourites.includes(v.id);
+        const stars = '★'.repeat(Math.floor(v.rating)) + (v.rating % 1 >= 0.5 ? '½' : '');
+        const card = document.createElement('div');
+        card.className = 'vendor-card' + (v.id === selectedId ? ' selected' : '');
+        card.id = `card-${v.id}`;
+        card.innerHTML = `
+          <div class="vendor-top">
+            <div class="vendor-name">${v.name}</div>
+            <div class="status-dot ${v.open ? 'open' : 'closed'}">${v.open ? 'Open' : 'Closed'}</div>
+          </div>
+          <div class="vendor-address">${v.address}</div>
+          <div class="vendor-meta">
+            <span class="stars">${stars}</span>
+            <span class="rating-count">(${v.reviews})</span>
+            <span class="distance">${v.dist}</span>
+            <button class="fav-btn" onclick="toggleFav(event,${v.id})">${isFav ? '❤️' : '🤍'}</button>
+          </div>`;
+        card.addEventListener('click', () => { openInfo(v); map.panTo({ lat: v.lat, lng: v.lng }); map.setZoom(15); });
+        list.appendChild(card);
+      });
+    }
+
+    function getFiltered() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      let data = VENDORS.filter(v => v.name.toLowerCase().includes(q) || v.address.toLowerCase().includes(q));
+      if (activeFilter === 'open') data = data.filter(v => v.open);
+      if (activeFilter === 'top') data = [...data].sort((a,b) => b.rating - a.rating);
+      if (activeFilter === 'near') data = [...data].sort((a,b) => parseFloat(a.dist) - parseFloat(b.dist));
+      return data;
+    }
+
+    function filterVendors() { renderAll(); }
+    function setFilter(f, btn) {
+      activeFilter = f;
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderAll();
+    }
+
+    function openInfo(v) {
+      selectedId = v.id;
+      document.getElementById('info-name').textContent = v.name;
+      document.getElementById('info-addr').textContent = v.address;
+      document.getElementById('info-rating').textContent = '★ ' + v.rating + ` (${v.reviews} reviews)`;
+      document.getElementById('info-hours').textContent = v.hours;
+      document.getElementById('info-specialty').textContent = v.specialty;
+      document.getElementById('info-dist').textContent = v.dist + ' away';
+      const s = document.getElementById('info-status');
+      s.innerHTML = `<span class="status-dot ${v.open ? 'open' : 'closed'}">${v.open ? 'Open Now' : 'Closed'}</span>`;
+      document.getElementById('info-directions').href = `https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}`;
+      document.getElementById('info-panel').classList.add('visible');
+      document.querySelectorAll('.vendor-card').forEach(c => c.classList.remove('selected'));
+      const card = document.getElementById(`card-${v.id}`);
+      if (card) { card.classList.add('selected'); card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    }
+
+    function closeInfo() {
+      document.getElementById('info-panel').classList.remove('visible');
+      selectedId = null;
+    }
+
+    function toggleFav(e, id) {
+      e.stopPropagation();
+      const loggedIn = localStorage.getItem('df_user');
+      if (!loggedIn) { showToast('Please log in to save favourites'); return; }
+      if (favourites.includes(id)) {
+        favourites = favourites.filter(f => f !== id);
+        showToast('Removed from favourites');
+      } else {
+        favourites.push(id);
+        showToast('❤️ Added to favourites!');
+      }
+      localStorage.setItem('df_favs', JSON.stringify(favourites));
+      renderAll();
+    }
+
+    function favouriteVendor() {
+      if (selectedId) toggleFav({ stopPropagation: ()=>{} }, selectedId);
+    }
+
+    function locateMe() {
+      if (!navigator.geolocation) { showToast('Geolocation not supported'); return; }
+      navigator.geolocation.getCurrentPosition(pos => {
+        userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        map.panTo(userLocation); map.setZoom(13);
+        new google.maps.Marker({
+          position: userLocation, map,
+          icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#4A90E2', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2 },
+          title: 'You are here'
+        });
+        showToast('📍 Located! Showing nearby vendors');
+      }, () => showToast('Could not get your location'));
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyATnemg7sJtXZs8O65pa2LJuH7F5UQSjNw&callback=initMap"></script>
+</body>
+</html>

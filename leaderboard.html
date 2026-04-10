@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoubleFinder – Leaderboard</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #F4A300;
+      --turmeric: #E8820C;
+      --pepper-red: #C0392B;
+      --deep-green: #1A3A2A;
+      --leaf: #2D6A4F;
+      --cream: #FFF8EC;
+      --dark: #0E1A14;
+      --card-bg: #132018;
+      --text-muted: #7A8C82;
+      --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background: var(--dark); color: var(--cream); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(14,26,20,0.95);
+      border-bottom: 1px solid rgba(244,163,0,0.15);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: var(--saffron); text-decoration: none; }
+    .logo span { color: var(--cream); }
+    nav ul { list-style: none; display: flex; gap: 1.8rem; align-items: center; }
+    nav ul a { color: var(--cream); text-decoration: none; font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    nav ul a:hover, nav ul a.active { color: var(--saffron); }
+    .btn-nav { background: var(--saffron); color: var(--dark) !important; padding: 0.45rem 1.2rem; border-radius: 2px; }
+
+    .page-hero {
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(244,163,0,0.08) 0%, transparent 60%);
+    }
+    .page-tag {
+      font-family: 'Syne', sans-serif; font-size: 0.75rem;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--saffron); margin-bottom: 1rem; position: relative;
+    }
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      letter-spacing: 3px; line-height: 1; position: relative;
+    }
+
+    .tabs {
+      display: flex; justify-content: center; gap: 0.5rem;
+      padding: 0 2rem 2rem;
+    }
+    .tab {
+      font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 0.6rem 1.5rem; border-radius: 2px;
+      cursor: pointer; transition: all 0.2s;
+      background: transparent;
+      border: 1px solid rgba(244,163,0,0.2); color: var(--text-muted);
+    }
+    .tab.active { background: var(--saffron); color: var(--dark); border-color: var(--saffron); }
+    .tab:hover:not(.active) { border-color: var(--saffron); color: var(--cream); }
+
+    /* PODIUM */
+    .podium-section {
+      max-width: 800px; margin: 0 auto; padding: 0 2rem 3rem;
+    }
+    .podium {
+      display: flex; align-items: flex-end; justify-content: center;
+      gap: 1rem; height: 220px; margin-bottom: 2rem;
+    }
+    .podium-item {
+      display: flex; flex-direction: column; align-items: center;
+      position: relative;
+    }
+    .podium-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin-bottom: 0.5rem;
+      border: 3px solid transparent;
+    }
+    .rank-1 .podium-avatar { border-color: var(--gold); background: rgba(255,215,0,0.1); }
+    .rank-2 .podium-avatar { border-color: var(--silver); background: rgba(192,192,192,0.1); }
+    .rank-3 .podium-avatar { border-color: var(--bronze); background: rgba(205,127,50,0.1); }
+    .podium-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; text-align: center; max-width: 100px; margin-bottom: 0.3rem; }
+    .podium-score { font-family: 'Syne', sans-serif; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .podium-block {
+      border-radius: 4px 4px 0 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+      width: 120px;
+    }
+    .rank-1 .podium-block { height: 130px; background: linear-gradient(180deg, rgba(255,215,0,0.25), rgba(255,215,0,0.05)); border: 1px solid rgba(255,215,0,0.3); color: var(--gold); }
+    .rank-2 .podium-block { height: 95px; background: linear-gradient(180deg, rgba(192,192,192,0.15), rgba(192,192,192,0.03)); border: 1px solid rgba(192,192,192,0.2); color: var(--silver); }
+    .rank-3 .podium-block { height: 70px; background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.03)); border: 1px solid rgba(205,127,50,0.2); color: var(--bronze); }
+
+    /* TABLE */
+    .leaderboard-table { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 80px 80px 80px 80px;
+      align-items: center; gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(244,163,0,0.07);
+      transition: background 0.2s; cursor: pointer;
+    }
+    .lb-row:hover { background: rgba(244,163,0,0.04); }
+    .lb-row.header {
+      font-family: 'Syne', sans-serif; font-size: 0.72rem;
+      font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-muted); cursor: default;
+      border-bottom: 1px solid rgba(244,163,0,0.15);
+      padding-bottom: 0.8rem; margin-bottom: 0.2rem;
+    }
+    .lb-row.header:hover { background: transparent; }
+    .lb-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; text-align: center;
+    }
+    .lb-rank.gold { color: var(--gold); }
+    .lb-rank.silver { color: var(--silver); }
+    .lb-rank.bronze { color: var(--bronze); }
+    .lb-info { display: flex; flex-direction: column; gap: 0.2rem; }
+    .lb-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; }
+    .lb-location { color: var(--text-muted); font-size: 0.78rem; }
+    .lb-num {
+      text-align: center; font-size: 0.9rem;
+    }
+    .lb-rating { color: var(--saffron); font-weight: 600; }
+    .lb-badge {
+      display: inline-block;
+      font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 0.2rem 0.5rem; border-radius: 2px;
+      margin-left: 0.4rem; vertical-align: middle;
+    }
+    .badge-hot { background: rgba(192,57,43,0.2); color: var(--pepper-red); }
+    .badge-new { background: rgba(39,174,96,0.2); color: #27AE60; }
+    .badge-top { background: rgba(244,163,0,0.2); color: var(--saffron); }
+    .lb-trend { text-align: center; font-size: 0.85rem; }
+    .trend-up { color: #27AE60; }
+    .trend-down { color: var(--pepper-red); }
+    .trend-same { color: var(--text-muted); }
+
+    /* pagination */
+    .pagination { display: flex; justify-content: center; gap: 0.5rem; padding-bottom: 3rem; }
+    .page-btn {
+      width: 38px; height: 38px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
+      border: 1px solid rgba(244,163,0,0.2); border-radius: 3px;
+      background: transparent; color: var(--cream); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .page-btn.active { background: var(--saffron); color: var(--dark); border-color: var(--saffron); }
+    .page-btn:hover:not(.active) { border-color: var(--saffron); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">Double<span>Finder</span></a>
+    <ul>
+      <li><a href="map.html">Map</a></li>
+      <li><a href="leaderboard.html" class="active">Leaderboard</a></li>
+      <li><a href="profile.html">Profile</a></li>
+      <li><a href="login.html" class="btn-nav">Log In</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-tag">Community Rankings</div>
+    <h1 class="page-title">Doubles<br><span style="color:var(--saffron)">Leaderboard</span></h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('rated',this)">Top Rated</button>
+    <button class="tab" onclick="switchTab('visited',this)">Most Visited</button>
+    <button class="tab" onclick="switchTab('trending',this)">Trending</button>
+  </div>
+
+  <!-- PODIUM -->
+  <div class="podium-section">
+    <div class="podium" id="podium"></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="leaderboard-table">
+    <div class="lb-row header">
+      <div>Rank</div>
+      <div>Vendor</div>
+      <div style="text-align:center">Rating</div>
+      <div style="text-align:center">Reviews</div>
+      <div style="text-align:center">Visits</div>
+      <div style="text-align:center">Trend</div>
+    </div>
+    <div id="lb-body"></div>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">›</button>
+  </div>
+
+  <script>
+    const VENDORS = [
+      { rank:1, name:"Chaguanas Doubles King", location:"Montrose Rd, Chaguanas", rating:4.9, reviews:524, visits:3840, trend:'+2', badge:'top', emoji:'👑' },
+      { rank:2, name:"Curepe Doubles Express",  location:"Eastern Main Rd, Curepe",   rating:4.8, reviews:401, visits:2910, trend:'+1', badge:'hot', emoji:'🔥' },
+      { rank:3, name:"Sauce & Bara Central",     location:"Charlotte St, Port of Spain", rating:4.8, reviews:312, visits:2560, trend:'—', badge:null, emoji:'⭐' },
+      { rank:4, name:"Maraval Morning Stop",     location:"Maraval Rd, Port of Spain",   rating:4.7, reviews:220, visits:1840, trend:'+3', badge:'new', emoji:'🌟' },
+      { rank:5, name:"Tunapuna Doubles Spot",    location:"Main Rd, Tunapuna",          rating:4.7, reviews:275, visits:1720, trend:'-1', badge:null, emoji:'🌶️' },
+      { rank:6, name:"San Fernando Doubles Man", location:"Coffee St, San Fernando",    rating:4.6, reviews:310, visits:1580, trend:'+1', badge:null, emoji:'🫓' },
+      { rank:7, name:"Fyzabad Road Doubles",     location:"Southern Main Rd, Fyzabad",  rating:4.5, reviews:187, visits:1120, trend:'—', badge:null, emoji:'🥘' },
+      { rank:8, name:"Arima Junction Spot",      location:"Arima Old Rd, Arima",        rating:4.3, reviews:98,  visits:780,  trend:'-2', badge:null, emoji:'🌿' },
+    ];
+
+    function renderPodium(data) {
+      const top3 = [data[1], data[0], data[2]]; // silver, gold, bronze order for visual
+      const classes = ['rank-2','rank-1','rank-3'];
+      const medals = ['🥈','🥇','🥉'];
+      const html = top3.map((v,i) => `
+        <div class="podium-item ${classes[i]}">
+          <div class="podium-avatar">${v.emoji}</div>
+          <div class="podium-name">${v.name.split(' ').slice(0,2).join(' ')}</div>
+          <div class="podium-score">★ ${v.rating}</div>
+          <div class="podium-block">${medals[i]}</div>
+        </div>`).join('');
+      document.getElementById('podium').innerHTML = html;
+    }
+
+    function renderTable(data) {
+      const badgeMap = { hot:'<span class="lb-badge badge-hot">🔥 Hot</span>', new:'<span class="lb-badge badge-new">New</span>', top:'<span class="lb-badge badge-top">★ Top</span>' };
+      const html = data.map(v => {
+        const rankClass = v.rank===1?'gold':v.rank===2?'silver':v.rank===3?'bronze':'';
+        const trendClass = v.trend.startsWith('+')?'trend-up':v.trend==='-'||v.trend==='—'?'trend-same':'trend-down';
+        const trendIcon = v.trend.startsWith('+')?'↑':v.trend==='—'?'–':'↓';
+        return `
+        <div class="lb-row" onclick="goToMap()">
+          <div class="lb-rank ${rankClass}">${v.rank}</div>
+          <div class="lb-info">
+            <div class="lb-name">${v.emoji} ${v.name}${v.badge?badgeMap[v.badge]:''}</div>
+            <div class="lb-location">${v.location}</div>
+          </div>
+          <div class="lb-num lb-rating">★ ${v.rating}</div>
+          <div class="lb-num" style="color:var(--text-muted)">${v.reviews}</div>
+          <div class="lb-num" style="color:var(--text-muted)">${v.visits.toLocaleString()}</div>
+          <div class="lb-trend ${trendClass}">${trendIcon} ${Math.abs(v.trend)}</div>
+        </div>`;
+      }).join('');
+      document.getElementById('lb-body').innerHTML = html;
+    }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      let sorted = [...VENDORS];
+      if (tab === 'visited') sorted.sort((a,b) => b.visits - a.visits);
+      else if (tab === 'trending') sorted.sort((a,b) => parseInt(b.trend) - parseInt(a.trend));
+      // re-rank
+      sorted = sorted.map((v,i) => ({...v, rank: i+1}));
+      renderPodium(sorted);
+      renderTable(sorted);
+    }
+
+    function goToMap() { window.location.href = 'map.html'; }
+
+    renderPodium(VENDORS);
+    renderTable(VENDORS);
+  </script>
+</body>
+</html>

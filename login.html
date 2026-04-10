@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoubleFinder – Login</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #F4A300;
+      --turmeric: #E8820C;
+      --cream: #FFF8EC;
+      --dark: #0E1A14;
+      --card-bg: #132018;
+      --text-muted: #7A8C82;
+      --error: #C0392B;
+      --success: #27AE60;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--dark); color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+    .page-bg {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 20% 50%, rgba(45,106,79,0.15) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(244,163,0,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      border-bottom: 1px solid rgba(244,163,0,0.1);
+      position: relative; z-index: 10;
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: var(--saffron); text-decoration: none; }
+    .logo span { color: var(--cream); }
+
+    .auth-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem; position: relative;
+    }
+    .auth-card {
+      width: 100%; max-width: 420px;
+      background: var(--card-bg);
+      border: 1px solid rgba(244,163,0,0.12);
+      border-radius: 4px;
+      padding: 2.5rem;
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+    .auth-header { text-align: center; margin-bottom: 2rem; }
+    .auth-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 2px; }
+    .auth-header h1 span { color: var(--saffron); }
+    .auth-header p { color: var(--text-muted); font-size: 0.88rem; margin-top: 0.4rem; }
+
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      background: rgba(255,248,236,0.05);
+      border: 1px solid rgba(244,163,0,0.18);
+      border-radius: 3px;
+      color: var(--cream); padding: 0.85rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s, background 0.2s;
+    }
+    input:focus { border-color: var(--saffron); background: rgba(244,163,0,0.04); }
+    input.error { border-color: var(--error); }
+    .input-hint { font-size: 0.75rem; margin-top: 0.4rem; color: var(--error); display: none; }
+    .input-hint.visible { display: block; }
+
+    .form-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .remember { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+    .remember input[type="checkbox"] { accent-color: var(--saffron); width: 14px; height: 14px; }
+    .remember span { font-size: 0.82rem; color: var(--text-muted); }
+    .forgot-link { font-size: 0.82rem; color: var(--saffron); text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--saffron); color: var(--dark);
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 0.9rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 1rem; border-radius: 3px; border: none;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(244,163,0,0.25);
+    }
+    .btn-submit:hover { background: var(--turmeric); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(244,163,0,0.35); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; }
+    .divider hr { flex: 1; border: none; border-top: 1px solid rgba(244,163,0,0.1); }
+    .divider span { color: var(--text-muted); font-size: 0.78rem; font-family: 'Syne', sans-serif; }
+
+    .demo-creds {
+      background: rgba(244,163,0,0.06);
+      border: 1px solid rgba(244,163,0,0.15);
+      border-radius: 3px; padding: 0.9rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .demo-creds p { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--saffron); margin-bottom: 0.4rem; }
+    .demo-creds span { font-size: 0.82rem; color: var(--text-muted); display: block; }
+    .demo-fill {
+      display: inline-block; margin-top: 0.5rem;
+      font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700;
+      color: var(--saffron); cursor: pointer; text-decoration: underline;
+    }
+
+    .auth-switch { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); }
+    .auth-switch a { color: var(--saffron); text-decoration: none; font-weight: 600; font-family: 'Syne', sans-serif; }
+    .auth-switch a:hover { text-decoration: underline; }
+
+    .alert {
+      border-radius: 3px; padding: 0.8rem 1rem; margin-bottom: 1rem;
+      font-size: 0.85rem; font-family: 'Syne', sans-serif; font-weight: 600;
+      display: none;
+    }
+    .alert.success { background: rgba(39,174,96,0.12); border: 1px solid rgba(39,174,96,0.3); color: #27AE60; display: block; }
+    .alert.error-alert { background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.3); color: var(--error); display: block; }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <nav>
+    <a href="index.html" class="logo">Double<span>Finder</span></a>
+    <a href="register.html" style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--saffron);text-decoration:none;">Create Account →</a>
+  </nav>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Welcome <span>Back</span></h1>
+        <p>Log in to access your favourites and ratings</p>
+      </div>
+
+      <div id="alert-msg" class="alert"></div>
+
+      <!-- Demo credentials hint -->
+      <div class="demo-creds">
+        <p>📋 Demo Credentials</p>
+        <span>Username: bob &nbsp;|&nbsp; Email: bob@mail.com</span>
+        <span>Password: bobpass</span>
+        <span class="demo-fill" onclick="fillDemo()">Auto-fill demo ↗</span>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Username or Email</label>
+          <input type="text" id="username" placeholder="bob or bob@mail.com" autocomplete="username"/>
+          <div class="input-hint" id="username-hint">Please enter your username or email</div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+          <div class="input-hint" id="password-hint">Please enter your password</div>
+        </div>
+        <div class="form-footer">
+          <label class="remember">
+            <input type="checkbox" id="remember"/>
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-submit" id="submit-btn">Log In</button>
+      </form>
+
+      <div class="auth-switch">Don't have an account? <a href="register.html">Sign up free</a></div>
+    </div>
+  </div>
+
+  <script>
+    const USERS = [
+      { username: 'bob', email: 'bob@mail.com', password: 'bobpass', name: 'Bob Smith' }
+    ];
+
+    function fillDemo() {
+      document.getElementById('username').value = 'bob';
+      document.getElementById('password').value = 'bobpass';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      clearErrors();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      let valid = true;
+
+      if (!u) { showFieldError('username', 'username-hint'); valid = false; }
+      if (!p) { showFieldError('password', 'password-hint'); valid = false; }
+      if (!valid) return;
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true; btn.textContent = 'Logging in…';
+
+      setTimeout(() => {
+        const user = USERS.find(usr => (usr.username === u || usr.email === u) && usr.password === p);
+        if (user) {
+          localStorage.setItem('df_user', JSON.stringify({ name: user.name, email: user.email, username: user.username }));
+          showAlert('success', '✓ Login successful! Redirecting…');
+          setTimeout(() => window.location.href = 'profile.html', 1000);
+        } else {
+          showAlert('error-alert', '✗ Invalid username or password');
+          btn.disabled = false; btn.textContent = 'Log In';
+        }
+      }, 800);
+    }
+
+    function showFieldError(inputId, hintId) {
+      document.getElementById(inputId).classList.add('error');
+      document.getElementById(hintId).classList.add('visible');
+    }
+    function clearErrors() {
+      document.querySelectorAll('input').forEach(i => i.classList.remove('error'));
+      document.querySelectorAll('.input-hint').forEach(h => h.classList.remove('visible'));
+      document.getElementById('alert-msg').className = 'alert';
+      document.getElementById('alert-msg').textContent = '';
+    }
+    function showAlert(type, msg) {
+      const el = document.getElementById('alert-msg');
+      el.className = `alert ${type}`; el.textContent = msg;
+    }
+
+    // If already logged in
+    if (localStorage.getItem('df_user')) window.location.href = 'profile.html';
+  </script>
+</body>
+</html>

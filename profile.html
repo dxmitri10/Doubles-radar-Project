@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoubleFinder – Profile</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #F4A300;
+      --turmeric: #E8820C;
+      --cream: #FFF8EC;
+      --dark: #0E1A14;
+      --card-bg: #132018;
+      --card2: #0f1e14;
+      --text-muted: #7A8C82;
+      --border: rgba(244,163,0,0.1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background: var(--dark); color: var(--cream); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: rgba(14,26,20,0.95); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: var(--saffron); text-decoration: none; }
+    .logo span { color: var(--cream); }
+    nav ul { list-style: none; display: flex; gap: 1.8rem; align-items: center; }
+    nav ul a { color: var(--cream); text-decoration: none; font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    nav ul a:hover, nav ul a.active { color: var(--saffron); }
+    .btn-danger { background: rgba(192,57,43,0.15) !important; color: #C0392B !important; border: 1px solid rgba(192,57,43,0.3); padding: 0.45rem 1.2rem; border-radius: 2px; cursor: pointer; }
+
+    .profile-hero {
+      background: linear-gradient(180deg, rgba(244,163,0,0.06) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2.5rem 0;
+    }
+    .profile-top { display: flex; gap: 2rem; align-items: flex-end; max-width: 1100px; margin: 0 auto; padding-bottom: 1.5rem; }
+    .avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron), var(--turmeric));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; border: 3px solid rgba(244,163,0,0.3);
+      flex-shrink: 0;
+    }
+    .profile-info h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.2rem; }
+    .profile-info .handle { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 0.8rem; }
+    .profile-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .tag { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 20px; border: 1px solid rgba(244,163,0,0.25); color: var(--saffron); }
+    .profile-stats { margin-left: auto; display: flex; gap: 2rem; align-items: flex-end; padding-bottom: 0.2rem; }
+    .pstat { text-align: center; }
+    .pstat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--saffron); }
+    .pstat-label { font-family: 'Syne', sans-serif; font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+
+    .profile-tabs { border-bottom: 1px solid var(--border); }
+    .profile-tabs ul { list-style: none; display: flex; gap: 0; max-width: 1100px; margin: 0 auto; padding: 0 2.5rem; }
+    .profile-tabs li a { display: block; padding: 0.9rem 1.5rem; font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); text-decoration: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .profile-tabs li a.active, .profile-tabs li a:hover { color: var(--saffron); border-bottom-color: var(--saffron); }
+
+    .profile-content { max-width: 1100px; margin: 0 auto; padding: 2rem 2.5rem; display: grid; grid-template-columns: 1fr 320px; gap: 2rem; }
+
+    .section-label { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; }
+
+    /* FAVOURITES */
+    .fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .fav-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1.2rem; transition: border-color 0.2s, transform 0.2s; cursor: pointer; }
+    .fav-card:hover { border-color: rgba(244,163,0,0.35); transform: translateY(-2px); }
+    .fav-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .fav-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
+    .fav-rating { color: var(--saffron); font-size: 0.82rem; }
+    .fav-addr { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.8rem; }
+    .fav-footer { display: flex; justify-content: space-between; align-items: center; }
+    .open-tag { font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: #27AE60; }
+    .closed-tag { color: #C0392B; }
+    .remove-fav { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.78rem; font-family: 'Syne', sans-serif; transition: color 0.2s; }
+    .remove-fav:hover { color: #C0392B; }
+
+    /* ACTIVITY */
+    .activity-feed { display: flex; flex-direction: column; gap: 0.8rem; }
+    .activity-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .activity-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .activity-text { font-size: 0.85rem; line-height: 1.5; }
+    .activity-text strong { color: var(--saffron); }
+    .activity-time { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    /* SIDEBAR WIDGETS */
+    .sidebar-widget { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; margin-bottom: 1.2rem; }
+    .widget-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.95rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+    .level-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem; }
+    .level-fill { height: 100%; background: linear-gradient(90deg, var(--saffron), var(--turmeric)); border-radius: 3px; transition: width 1s ease; }
+    .level-label { font-size: 0.78rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+    .badge-item { text-align: center; padding: 0.8rem 0.3rem; background: rgba(255,248,236,0.03); border-radius: 3px; border: 1px solid rgba(244,163,0,0.08); }
+    .badge-emoji { font-size: 1.4rem; display: block; margin-bottom: 0.3rem; }
+    .badge-name { font-family: 'Syne', sans-serif; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+    .badge-item.earned { border-color: rgba(244,163,0,0.25); }
+    .badge-item.locked { opacity: 0.35; filter: grayscale(1); }
+
+    @media(max-width:900px) { .profile-content { grid-template-columns: 1fr; } .profile-stats { display: none; } }
+    @media(max-width:600px) { .profile-top { flex-direction: column; gap: 1rem; align-items: flex-start; } .profile-tabs li a { padding: 0.7rem 0.8rem; font-size: 0.72rem; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">Double<span>Finder</span></a>
+    <ul>
+      <li><a href="map.html">Map</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
+      <li><a href="profile.html" class="active">Profile</a></li>
+      <li><a href="settings.html">Settings</a></li>
+      <li><button class="btn-danger" onclick="logout()">Log Out</button></li>
+    </ul>
+  </nav>
+
+  <!-- PROFILE HERO -->
+  <div class="profile-hero" id="profile-hero">
+    <div class="profile-top">
+      <div class="avatar" id="avatar-emoji">😊</div>
+      <div class="profile-info">
+        <h1 id="profile-name">Loading…</h1>
+        <div class="handle" id="profile-handle">@username</div>
+        <div class="profile-tags">
+          <span class="tag">🌶️ Pepper Lover</span>
+          <span class="tag">🏆 Top Reviewer</span>
+          <span class="tag">📍 Port of Spain</span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="pstat"><div class="pstat-num" id="fav-count">0</div><div class="pstat-label">Favourites</div></div>
+        <div class="pstat"><div class="pstat-num">14</div><div class="pstat-label">Reviews</div></div>
+        <div class="pstat"><div class="pstat-num">3</div><div class="pstat-label">Badges</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-tabs">
+    <ul>
+      <li><a href="#" class="active" onclick="showTab('favs',this)">Favourites</a></li>
+      <li><a href="#" onclick="showTab('activity',this)">Activity</a></li>
+      <li><a href="#" onclick="showTab('reviews',this)">Reviews</a></li>
+    </ul>
+  </div>
+
+  <div class="profile-content">
+    <!-- MAIN -->
+    <div class="main-col">
+      <!-- FAVOURITES TAB -->
+      <div id="tab-favs">
+        <div class="section-label">Saved Vendors</div>
+        <div class="fav-grid" id="fav-grid"></div>
+      </div>
+
+      <!-- ACTIVITY TAB -->
+      <div id="tab-activity" style="display:none">
+        <div class="section-label">Recent Activity</div>
+        <div class="activity-feed">
+          <div class="activity-item"><div class="activity-icon">⭐</div><div class="activity-text">You rated <strong>Chaguanas Doubles King</strong> 5 stars<div class="activity-time">2 hours ago</div></div></div>
+          <div class="activity-item"><div class="activity-icon">❤️</div><div class="activity-text">You saved <strong>Curepe Doubles Express</strong> to favourites<div class="activity-time">Yesterday</div></div></div>
+          <div class="activity-item"><div class="activity-icon">💬</div><div class="activity-text">You commented on <strong>Sauce & Bara Central</strong>: "Best bara in POS!"<div class="activity-time">3 days ago</div></div></div>
+          <div class="activity-item"><div class="activity-icon">📍</div><div class="activity-text">You checked in at <strong>Maraval Morning Stop</strong><div class="activity-time">Last week</div></div></div>
+          <div class="activity-item"><div class="activity-icon">🏆</div><div class="activity-text">You earned the <strong>Early Bird</strong> badge for checking in before 6AM<div class="activity-time">Last week</div></div></div>
+        </div>
+      </div>
+
+      <!-- REVIEWS TAB -->
+      <div id="tab-reviews" style="display:none">
+        <div class="section-label">Your Reviews</div>
+        <div class="activity-feed">
+          <div class="activity-item"><div class="activity-icon">🌶️</div><div class="activity-text"><strong>Chaguanas Doubles King</strong> — ★★★★★<br>"Best doubles on the island, no cap. The channa hit different."<div class="activity-time">2 hours ago</div></div></div>
+          <div class="activity-item"><div class="activity-icon">🫓</div><div class="activity-text"><strong>Sauce & Bara Central</strong> — ★★★★☆<br>"Bara could be a lil softer but the pepper mango make up for it."<div class="activity-time">3 days ago</div></div></div>
+          <div class="activity-item"><div class="activity-icon">☀️</div><div class="activity-text"><strong>Maraval Morning Stop</strong> — ★★★★★<br>"Always on time, always fresh. My morning ritual."<div class="activity-time">Last week</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside>
+      <!-- LEVEL -->
+      <div class="sidebar-widget">
+        <div class="widget-title">🧡 Doubles Level</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem">Level 5 — Bara Boss</span>
+          <span style="font-size:0.8rem;color:var(--text-muted)">320 XP</span>
+        </div>
+        <div class="level-bar"><div class="level-fill" id="xp-bar" style="width:64%"></div></div>
+        <div class="level-label"><span>320 XP</span><span>500 XP to Level 6</span></div>
+      </div>
+
+      <!-- BADGES -->
+      <div class="sidebar-widget">
+        <div class="widget-title">🏅 Badges</div>
+        <div class="badge-grid">
+          <div class="badge-item earned"><span class="badge-emoji">🌅</span><div class="badge-name">Early Bird</div></div>
+          <div class="badge-item earned"><span class="badge-emoji">🔥</span><div class="badge-name">Pepper Head</div></div>
+          <div class="badge-item earned"><span class="badge-emoji">⭐</span><div class="badge-name">Reviewer</div></div>
+          <div class="badge-item locked"><span class="badge-emoji">👑</span><div class="badge-name">Legend</div></div>
+          <div class="badge-item locked"><span class="badge-emoji">🗺️</span><div class="badge-name">Explorer</div></div>
+          <div class="badge-item locked"><span class="badge-emoji">💯</span><div class="badge-name">Century</div></div>
+        </div>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="sidebar-widget">
+        <div class="widget-title">⚙️ Quick Links</div>
+        <div style="display:flex;flex-direction:column;gap:0.6rem">
+          <a href="settings.html" style="color:var(--text-muted);text-decoration:none;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--border);transition:color 0.2s" onmouseover="this.style.color='var(--saffron)'" onmouseout="this.style.color='var(--text-muted)'">⚙️ Account Settings</a>
+          <a href="map.html" style="color:var(--text-muted);text-decoration:none;font-size:0.85rem;padding:0.5rem 0;border-bottom:1px solid var(--border);transition:color 0.2s" onmouseover="this.style.color='var(--saffron)'" onmouseout="this.style.color='var(--text-muted)'">🗺️ Find Doubles</a>
+          <a href="leaderboard.html" style="color:var(--text-muted);text-decoration:none;font-size:0.85rem;padding:0.5rem 0;transition:color 0.2s" onmouseover="this.style.color='var(--saffron)'" onmouseout="this.style.color='var(--text-muted)'">🏆 Leaderboard</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const VENDOR_DATA = {
+      1: { name:"Sauce & Bara Central", address:"Charlotte St, Port of Spain", rating:4.8, open:true },
+      2: { name:"Chaguanas Doubles King", address:"Montrose Rd, Chaguanas", rating:4.9, open:true },
+      4: { name:"Maraval Morning Stop", address:"Maraval Rd, Port of Spain", rating:4.7, open:true },
+      7: { name:"Curepe Doubles Express", address:"Eastern Main Rd, Curepe", rating:4.8, open:true },
+    };
+    const AVATARS = ['😊','🧡','🌶️','🫓','⭐','👑'];
+
+    function loadProfile() {
+      const user = JSON.parse(localStorage.getItem('df_user') || 'null');
+      if (!user) { window.location.href = 'login.html'; return; }
+      document.getElementById('profile-name').textContent = user.name || user.username;
+      document.getElementById('profile-handle').textContent = '@' + (user.username || 'user');
+      document.getElementById('avatar-emoji').textContent = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+      loadFavourites();
+    }
+
+    function loadFavourites() {
+      const favs = JSON.parse(localStorage.getItem('df_favs') || '[]');
+      document.getElementById('fav-count').textContent = favs.length;
+      const grid = document.getElementById('fav-grid');
+      if (favs.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;color:var(--text-muted);font-size:0.9rem;padding:2rem;text-align:center;background:var(--card-bg);border:1px dashed rgba(244,163,0,0.15);border-radius:4px">No favourites yet. <a href="map.html" style="color:var(--saffron)">Find doubles on the map →</a></div>`;
+        return;
+      }
+      grid.innerHTML = favs.map(id => {
+        const v = VENDOR_DATA[id] || { name:`Vendor #${id}`, address:'Trinidad', rating:4.5, open:true };
+        return `<div class="fav-card" onclick="window.location.href='map.html'">
+          <div class="fav-top"><div class="fav-name">${v.name}</div><div class="fav-rating">★ ${v.rating}</div></div>
+          <div class="fav-addr">${v.address}</div>
+          <div class="fav-footer">
+            <span class="${v.open ? 'open-tag' : 'closed-tag'}">${v.open ? '● Open' : '● Closed'}</span>
+            <button class="remove-fav" onclick="removeFav(event,${id})">Remove</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function removeFav(e, id) {
+      e.stopPropagation();
+      let favs = JSON.parse(localStorage.getItem('df_favs') || '[]');
+      favs = favs.filter(f => f !== id);
+      localStorage.setItem('df_favs', JSON.stringify(favs));
+      loadFavourites();
+    }
+
+    function showTab(tab, el) {
+      event.preventDefault();
+      document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+      document.getElementById('tab-' + tab).style.display = 'block';
+      document.querySelectorAll('.profile-tabs a').forEach(a => a.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function logout() {
+      localStorage.removeItem('df_user');
+      window.location.href = 'login.html';
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>
