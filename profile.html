@@ -4,7 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DoubleFinder – Profile</title>
-  <link rel="manifest" href="manifest.json"/>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F4A300" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DoubleFinder" />
+  <link rel="apple-touch-icon" href="https://placehold.co/192x192/F4A300/0E1A14?text=DF" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -59,7 +65,7 @@
 
     .section-label { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; }
 
-    /* FAVOURITES */
+    
     .fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
     .fav-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1.2rem; transition: border-color 0.2s, transform 0.2s; cursor: pointer; }
     .fav-card:hover { border-color: rgba(244,163,0,0.35); transform: translateY(-2px); }
@@ -73,7 +79,7 @@
     .remove-fav { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.78rem; font-family: 'Syne', sans-serif; transition: color 0.2s; }
     .remove-fav:hover { color: #C0392B; }
 
-    /* ACTIVITY */
+    
     .activity-feed { display: flex; flex-direction: column; gap: 0.8rem; }
     .activity-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.2rem; display: flex; gap: 1rem; align-items: flex-start; }
     .activity-icon { font-size: 1.3rem; flex-shrink: 0; }
@@ -81,7 +87,7 @@
     .activity-text strong { color: var(--saffron); }
     .activity-time { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
 
-    /* SIDEBAR WIDGETS */
+    
     .sidebar-widget { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; margin-bottom: 1.2rem; }
     .widget-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.95rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
     .level-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem; }
@@ -111,7 +117,7 @@
     </ul>
   </nav>
 
-  <!-- PROFILE HERO -->
+  
   <div class="profile-hero" id="profile-hero">
     <div class="profile-top">
       <div class="avatar" id="avatar-emoji">😊</div>
@@ -141,15 +147,15 @@
   </div>
 
   <div class="profile-content">
-    <!-- MAIN -->
+    
     <div class="main-col">
-      <!-- FAVOURITES TAB -->
+      
       <div id="tab-favs">
         <div class="section-label">Saved Vendors</div>
         <div class="fav-grid" id="fav-grid"></div>
       </div>
 
-      <!-- ACTIVITY TAB -->
+      
       <div id="tab-activity" style="display:none">
         <div class="section-label">Recent Activity</div>
         <div class="activity-feed">
@@ -161,7 +167,7 @@
         </div>
       </div>
 
-      <!-- REVIEWS TAB -->
+      
       <div id="tab-reviews" style="display:none">
         <div class="section-label">Your Reviews</div>
         <div class="activity-feed">
@@ -172,9 +178,8 @@
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <aside>
-      <!-- LEVEL -->
+     
       <div class="sidebar-widget">
         <div class="widget-title">🧡 Doubles Level</div>
         <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
@@ -185,7 +190,6 @@
         <div class="level-label"><span>320 XP</span><span>500 XP to Level 6</span></div>
       </div>
 
-      <!-- BADGES -->
       <div class="sidebar-widget">
         <div class="widget-title">🏅 Badges</div>
         <div class="badge-grid">
@@ -198,7 +202,7 @@
         </div>
       </div>
 
-      <!-- QUICK LINKS -->
+     
       <div class="sidebar-widget">
         <div class="widget-title">⚙️ Quick Links</div>
         <div style="display:flex;flex-direction:column;gap:0.6rem">
@@ -271,6 +275,13 @@
     }
 
     loadProfile();
+
+      if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.error('SW error:', err));
+  }
   </script>
 </body>
 </html>
+
