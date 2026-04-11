@@ -2,15 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DoubleFinder – Leaderboard</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#F4A300" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="DoubleFinder" />
-  <link rel="apple-touch-icon" href="https://placehold.co/192x192/F4A300/0E1A14?text=DF" />
+  <link rel="manifest" href="manifest.json"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -66,7 +60,6 @@
       letter-spacing: 3px; line-height: 1; position: relative;
     }
 
-  
     .data-source {
       display: inline-flex; align-items: center; gap: 0.4rem;
       margin-top: 1rem; position: relative;
@@ -117,6 +110,7 @@
       color: var(--text-muted);
     }
 
+
     .error-box {
       max-width: 600px; margin: 2rem auto;
       padding: 1.5rem 2rem;
@@ -146,7 +140,7 @@
     }
     .stats-bar span { color: var(--saffron); font-weight: 700; }
 
-   
+
     .podium-section {
       max-width: 800px; margin: 0 auto; padding: 0 2rem 3rem;
     }
@@ -179,7 +173,7 @@
     .rank-2 .podium-block { height: 95px; background: linear-gradient(180deg, rgba(192,192,192,0.15), rgba(192,192,192,0.03)); border: 1px solid rgba(192,192,192,0.2); color: var(--silver); }
     .rank-3 .podium-block { height: 70px; background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.03)); border: 1px solid rgba(205,127,50,0.2); color: var(--bronze); }
 
-  
+
     .leaderboard-table { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
     .lb-row {
       display: grid;
@@ -240,7 +234,7 @@
       color: var(--text-muted); font-size: 0.85rem;
     }
 
-    
+
     .pagination { display: flex; justify-content: center; gap: 0.5rem; padding-bottom: 3rem; }
     .page-btn {
       width: 38px; height: 38px;
@@ -282,29 +276,27 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('doubles',this)">Doubles Spots</button>
-    <button class="tab" onclick="switchTab('all',this)">All Food Vendors</button>
+    <button class="tab active" onclick="switchTab('all',this)">All Doubles</button>
     <button class="tab" onclick="switchTab('rated',this)">Has Hours</button>
   </div>
 
-  
   <div class="loading-overlay" id="loading">
     <div class="spinner"></div>
-    <div class="loading-text" id="loading-text">Fetching vendors from Trinidad…</div>
+    <div class="loading-text" id="loading-text">Fetching doubles vendors from Trinidad…</div>
   </div>
 
-  
+
   <div class="error-box" id="error-box">
     <p id="error-msg">Could not load data from OpenStreetMap. Please check your connection and try again.</p>
     <button class="retry-btn" onclick="loadData()">↺ Retry</button>
   </div>
 
-  
+
   <div class="stats-bar" id="stats-bar" style="display:none">
     Showing <span id="stat-count">0</span> vendors &nbsp;·&nbsp; Last updated <span id="stat-time">—</span>
   </div>
 
-  
+
   <div class="podium-section" id="podium-section" style="display:none">
     <div class="podium" id="podium"></div>
   </div>
@@ -337,14 +329,14 @@
     const PAGE_SIZE = 20;
     let allVendors = [];
     let currentPage = 1;
-    let currentTab = 'doubles';
+    let currentTab = 'all';
 
 
     async function fetchOverpass(query) {
       const body = 'data=' + encodeURIComponent(query);
       for (let i = 0; i < OVERPASS_MIRRORS.length; i++) {
         try {
-          setLoadingText(i === 0 ? 'Fetching vendors from Trinidad…' : `Trying backup server ${i}…`);
+          setLoadingText(i === 0 ? 'Fetching doubles vendors from Trinidad…' : `Trying backup server ${i}…`);
           const ctrl = new AbortController();
           const tid  = setTimeout(() => ctrl.abort(), 25000);
           const resp = await fetch(OVERPASS_MIRRORS[i], {
@@ -378,21 +370,20 @@
       const isDoubles =
         nameLC.includes('double') || nameLC.includes('bara') ||
         nameLC.includes('channa') || nameLC.includes('trini') ||
-        cuisineLC.includes('trinidadian') || cuisineLC.includes('caribbean') ||
+        cuisineLC.includes('trinidadian') || cuisineLC.includes('doubles') || cuisineLC.includes('caribbean') ||
         t['diet:trinidadian'] === 'yes';
 
-      const name = rawName
-        ? rawName
-        : isDoubles ? 'Doubles Vendor'
-        : t.amenity ? capitalise(t.amenity.replace(/_/g,' '))
-        : 'Food Vendor';
+      // Safety net: skip any node that slipped through without doubles relevance
+      if (!isDoubles) return null;
 
-  
+      const name = rawName || 'Doubles Vendor';
+
+
       const street = [t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' ');
       const city   = t['addr:city'] || t['addr:suburb'] || '';
       const area   = city || street || guessArea(el.lat, el.lon);
 
-   
+
       const amenity = t.amenity || t.shop || '';
       const typeLabel = t.cuisine
         ? capitalise(t.cuisine.split(';')[0].replace(/_/g,' '))
@@ -415,7 +406,6 @@
       };
     }
 
-  
     function guessArea(lat, lng) {
       if (lat > 10.6)  return 'North Trinidad';
       if (lat < 10.2)  return 'South Trinidad';
@@ -426,16 +416,18 @@
       return 'Trinidad';
     }
 
-
     async function loadData() {
       showLoading(true);
       hideError();
       hideSections();
 
+      // Query: only doubles/bara/channa/trinidadian-tagged nodes across all of Trinidad.
+      // The name~ regex and cuisine filters ensure only genuine doubles vendors are fetched.
       const query = `[out:json][timeout:30];
 (
-  node["amenity"~"fast_food|restaurant|snack_bar|food_court|street_vendor|cafe"](${TT_BBOX});
-  node["shop"~"deli|convenience|bakery"](${TT_BBOX});
+  node["name"~"double|bara|channa|pholourie",i](${TT_BBOX});
+  node["cuisine"~"trinidadian|doubles|caribbean",i](${TT_BBOX});
+  node["diet:trinidadian"="yes"](${TT_BBOX});
 );
 out body;`;
 
@@ -444,9 +436,9 @@ out body;`;
         const elements = data.elements || [];
 
         setLoadingText(`Processing ${elements.length} results…`);
-        await new Promise(r => setTimeout(r, 200)); // let UI breathe
+        await new Promise(r => setTimeout(r, 200)); 
 
-        allVendors = elements.map(parseNode);
+        allVendors = elements.map(parseNode).filter(v => v !== null);
 
         document.getElementById('stat-time').textContent = new Date().toLocaleTimeString('en-TT', { hour:'2-digit', minute:'2-digit' });
 
@@ -458,11 +450,12 @@ out body;`;
       }
     }
 
+
     function getFiltered(tab) {
       let list = [...allVendors];
-      if (tab === 'doubles') list = list.filter(v => v.isDoubles);
-      else if (tab === 'rated') list = list.filter(v => v.hasHours);
-      
+      // All results are doubles vendors — 'rated' tab filters to those with opening hours listed
+      if (tab === 'rated') list = list.filter(v => v.hasHours);
+
       list.sort((a, b) => {
         if (a.isDoubles !== b.isDoubles) return a.isDoubles ? -1 : 1;
         return a.name.localeCompare(b.name);
@@ -470,14 +463,9 @@ out body;`;
       return list;
     }
 
-
     function getEmoji(v) {
-      if (v.isDoubles) return '🫓';
-      const t = v.typeLabel.toLowerCase();
-      if (t.includes('cafe')) return '☕';
-      if (t.includes('bak')) return '🥐';
-      if (t.includes('caribbean') || t.includes('trini')) return '🌶️';
-      return '🍽️';
+      // All results are doubles vendors
+      return '🫓';
     }
 
     function renderPodium(top3) {
@@ -498,7 +486,6 @@ out body;`;
       document.getElementById('podium-section').style.display = 'block';
     }
 
-  
     function renderTable(list, page) {
       const start = (page - 1) * PAGE_SIZE;
       const slice = list.slice(start, start + PAGE_SIZE);
@@ -512,9 +499,7 @@ out body;`;
       document.getElementById('lb-body').innerHTML = slice.map((v, idx) => {
         const rank      = start + idx + 1;
         const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
-        const badge     = v.isDoubles
-          ? '<span class="lb-badge badge-doubles">Doubles</span>'
-          : '<span class="lb-badge badge-food">Food</span>';
+        const badge = '<span class="lb-badge badge-doubles">Doubles</span>';
         return `
         <div class="lb-row" onclick="window.open('${v.osmUrl}','_blank')">
           <div class="lb-rank ${rankClass}">${rank}</div>
@@ -531,7 +516,6 @@ out body;`;
       }).join('');
     }
 
- 
     function renderPagination(total, page) {
       const pages = Math.ceil(total / PAGE_SIZE);
       if (pages <= 1) { document.getElementById('pagination').style.display = 'none'; return; }
@@ -554,7 +538,6 @@ out body;`;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-
     function switchTab(tab, btn) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
@@ -573,7 +556,6 @@ out body;`;
       renderTable(list, currentPage);
       renderPagination(list.length, currentPage);
     }
-
 
     function showLoading(show) {
       document.getElementById('loading').style.display = show ? 'block' : 'none';
@@ -598,12 +580,6 @@ out body;`;
 
 
     loadData();
-    
-      if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.error('SW error:', err));
-  }
   </script>
 </body>
 </html>
