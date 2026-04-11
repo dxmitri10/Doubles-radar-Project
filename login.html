@@ -4,7 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DoubleFinder – Login</title>
-  <link rel="manifest" href="manifest.json"/>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F4A300" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DoubleFinder" />
+  <link rel="apple-touch-icon" href="https://placehold.co/192x192/F4A300/0E1A14?text=DF" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -141,7 +147,7 @@
 
       <div id="alert-msg" class="alert"></div>
 
-      <!-- Demo credentials hint -->
+  
       <div class="demo-creds">
         <p>📋 Demo Credentials</p>
         <span>Username: bob &nbsp;|&nbsp; Email: bob@mail.com</span>
@@ -226,8 +232,14 @@
       el.className = `alert ${type}`; el.textContent = msg;
     }
 
-    // If already logged in
+
     if (localStorage.getItem('df_user')) window.location.href = 'profile.html';
+
+      if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.error('SW error:', err));
+  }
   </script>
 </body>
 </html>
