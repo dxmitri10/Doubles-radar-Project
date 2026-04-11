@@ -4,722 +4,627 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DoubleFinder – Map</title>
+  <link rel="manifest" href="manifest.json"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --saffron: #F4A300;
-      --turmeric: #E8820C;
-      --pepper-red: #C0392B;
-      --leaf: #2D6A4F;
-      --cream: #FFF8EC;
-      --dark: #0E1A14;
-      --dark2: #162310;
-      --border: rgba(244,163,0,0.15);
-      --text-muted: #7A8C82;
-      --success: #27AE60;
-      --nav-h: 60px;
+      --saffron:#F4A300; --turmeric:#E8820C; --pepper-red:#C0392B;
+      --cream:#FFF8EC; --dark:#0E1A14; --dark2:#162310;
+      --border:rgba(244,163,0,0.15); --text-muted:#7A8C82; --success:#27AE60;
+      --nav-h:60px;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background: var(--dark); color: var(--cream); font-family: 'DM Sans', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--dark);color:var(--cream);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
-    /* NAVIGATION OF PAGE */
-    nav {
-      height: var(--nav-h); flex-shrink: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 1.5rem;
-      background: rgba(14,26,20,0.95);
-      border-bottom: 1px solid var(--border);
-      z-index: 200;
-    }
-    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: var(--saffron); text-decoration: none; }
-    .logo span { color: var(--cream); }
-    .nav-links { display: flex; gap: 1.2rem; align-items: center; list-style: none; }
-    .nav-links a { color: var(--cream); text-decoration: none; font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; transition: opacity 0.2s; }
-    .nav-links a:hover, .nav-links a.active { opacity: 1; color: var(--saffron); }
-    .btn-sm { background: var(--saffron); color: var(--dark) !important; padding: 0.4rem 1.1rem; border-radius: 2px; opacity: 1 !important; font-size: 0.78rem !important; }
-    .btn-sm:hover { background: var(--turmeric) !important; }
+    nav{height:var(--nav-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;background:rgba(14,26,20,.95);border-bottom:1px solid var(--border);z-index:200;}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--saffron);text-decoration:none;}
+    .logo span{color:var(--cream);}
+    .nav-links{display:flex;gap:1.2rem;align-items:center;list-style:none;}
+    .nav-links a{color:var(--cream);text-decoration:none;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;opacity:.7;transition:opacity .2s;}
+    .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--saffron);}
+    .btn-sm{background:var(--saffron);color:var(--dark)!important;padding:.4rem 1.1rem;border-radius:2px;opacity:1!important;font-size:.78rem!important;}
+    .btn-sm:hover{background:var(--turmeric)!important;}
 
-    /* LAYOUT OF PAGE */
-    .app-body { display: flex; flex: 1; overflow: hidden; }
+    .app-body{display:flex;flex:1;overflow:hidden;position:relative;}
 
-    /* SIDEBAR FOR DISPLAYING DATA */
-    .sidebar {
-      width: 360px; flex-shrink: 0;
-      background: var(--dark2);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      overflow: hidden;
-    }
-    .sidebar-top { padding: 1rem; border-bottom: 1px solid var(--border); }
-    .search-box {
-      position: relative;
-    }
-    .search-box input {
-      width: 100%; padding: 0.65rem 1rem 0.65rem 2.4rem;
-      background: rgba(255,248,236,0.05); border: 1px solid var(--border);
-      border-radius: 3px; color: var(--cream); font-family: 'DM Sans', sans-serif;
-      font-size: 0.875rem; outline: none; transition: border-color 0.2s;
-    }
-    .search-box input::placeholder { color: var(--text-muted); }
-    .search-box input:focus { border-color: var(--saffron); }
-    .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: var(--text-muted); pointer-events: none; }
-    .filter-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
-    .chip {
-      padding: 0.3rem 0.85rem; border-radius: 99px;
-      border: 1px solid var(--border); background: transparent;
-      color: var(--text-muted); font-family: 'DM Sans', sans-serif;
-      font-size: 0.75rem; cursor: pointer; transition: all 0.18s;
-    }
-    .chip:hover { border-color: var(--saffron); color: var(--saffron); }
-    .chip.active { background: var(--saffron); border-color: var(--saffron); color: var(--dark); font-weight: 600; }
+    /* SIDEBAR DESIGN */
+    .sidebar{width:360px;flex-shrink:0;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .sidebar-top{padding:1rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+    .search-box{position:relative;}
+    .search-box input{width:100%;padding:.65rem 1rem .65rem 2.4rem;background:rgba(255,248,236,.05);border:1px solid var(--border);border-radius:3px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.875rem;outline:none;transition:border-color .2s;}
+    .search-box input::placeholder{color:var(--text-muted);}
+    .search-box input:focus{border-color:var(--saffron);}
+    .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.85rem;color:var(--text-muted);pointer-events:none;}
+    .filter-row{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;}
+    .chip{padding:.3rem .85rem;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'DM Sans',sans-serif;font-size:.75rem;cursor:pointer;transition:all .18s;}
+    .chip:hover{border-color:var(--saffron);color:var(--saffron);}
+    .chip.active{background:var(--saffron);border-color:var(--saffron);color:var(--dark);font-weight:600;}
+    .result-bar{padding:.4rem 1rem;font-size:.7rem;color:var(--text-muted);font-family:'Syne',sans-serif;background:rgba(255,248,236,.02);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .result-bar span{color:var(--saffron);font-weight:700;}
+    .vendor-list{flex:1;overflow-y:auto;padding:.6rem;}
+    .vendor-list::-webkit-scrollbar{width:4px;}
+    .vendor-list::-webkit-scrollbar-thumb{background:rgba(244,163,0,.2);border-radius:99px;}
+    .vendor-card{background:rgba(255,248,236,.03);border:1px solid transparent;border-radius:4px;padding:.9rem;margin-bottom:.45rem;cursor:pointer;transition:all .18s;}
+    .vendor-card:hover,.vendor-card.selected{background:rgba(244,163,0,.07);border-color:rgba(244,163,0,.3);}
+    .vc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.35rem;}
+    .vc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;line-height:1.2;}
+    .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+    .sdot.open{background:var(--success);box-shadow:0 0 5px var(--success);}
+    .sdot.closed{background:var(--pepper-red);}
+    .sdot.unknown{background:var(--text-muted);}
+    .vc-loc{font-size:.75rem;color:var(--text-muted);margin-bottom:.4rem;}
+    .vc-meta{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+    .vc-rating{font-size:.78rem;color:var(--saffron);font-weight:600;}
+    .vc-dist,.vc-reviews{font-size:.7rem;color:var(--text-muted);}
+    .vc-tags{display:flex;gap:.3rem;margin-top:.4rem;flex-wrap:wrap;}
+    .tag{font-size:.65rem;padding:.12rem .45rem;border-radius:2px;background:rgba(244,163,0,.1);color:var(--saffron);border:1px solid rgba(244,163,0,.2);}
+    .no-results{text-align:center;padding:2.5rem 1rem;color:var(--text-muted);font-size:.875rem;}
+    .page-strip{border-top:1px solid var(--border);padding:.55rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .page-strip>span{font-size:.7rem;color:var(--text-muted);font-family:'Syne',sans-serif;}
+    .pbr{display:flex;gap:.3rem;}
+    .pdot{width:26px;height:26px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;}
+    .pdot.active{background:var(--saffron);color:var(--dark);border-color:var(--saffron);}
+    .pdot:hover:not(.active){border-color:var(--saffron);}
+    .pdot:disabled{opacity:.3;cursor:not-allowed;}
 
-    /* lIST OF VENDORS */
-    .vendor-list { flex: 1; overflow-y: auto; padding: 0.75rem; }
-    .vendor-list::-webkit-scrollbar { width: 4px; }
-    .vendor-list::-webkit-scrollbar-track { background: transparent; }
-    .vendor-list::-webkit-scrollbar-thumb { background: rgba(244,163,0,0.2); border-radius: 99px; }
-    .vendor-card {
-      background: rgba(255,248,236,0.03);
-      border: 1px solid transparent;
-      border-radius: 4px; padding: 1rem;
-      margin-bottom: 0.5rem; cursor: pointer;
-      transition: all 0.2s;
-    }
-    .vendor-card:hover, .vendor-card.selected {
-      background: rgba(244,163,0,0.07);
-      border-color: rgba(244,163,0,0.3);
-    }
-    .vc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.4rem; }
-    .vc-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-    .status-dot.open { background: var(--success); box-shadow: 0 0 6px var(--success); }
-    .status-dot.closed { background: var(--pepper-red); }
-    .vc-loc { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-    .vc-meta { display: flex; align-items: center; gap: 0.75rem; }
-    .vc-rating { font-size: 0.8rem; color: var(--saffron); font-weight: 600; }
-    .vc-dist { font-size: 0.75rem; color: var(--text-muted); }
-    .vc-updated { font-size: 0.72rem; color: var(--text-muted); }
-    .vc-tags { display: flex; gap: 0.35rem; margin-top: 0.5rem; flex-wrap: wrap; }
-    .tag { font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 2px; background: rgba(244,163,0,0.1); color: var(--saffron); border: 1px solid rgba(244,163,0,0.2); }
-    .no-results { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.875rem; }
+    #map{flex:1;height:100%;}
 
-    /* MAP STYLE */
-    #map { flex: 1; height: 100%; }
+    /* INFO PANEL DESIGN */
+    .info-panel{position:absolute;top:0;right:0;bottom:0;width:360px;background:var(--dark2);border-left:1px solid var(--border);overflow-y:auto;z-index:150;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+    .info-panel.open{transform:translateX(0);}
+    .info-panel::-webkit-scrollbar{width:4px;}
+    .info-panel::-webkit-scrollbar-thumb{background:rgba(244,163,0,.2);border-radius:99px;}
+    .panel-close{position:absolute;top:.8rem;right:.8rem;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--cream);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:10;}
+    .panel-close:hover{background:rgba(255,255,255,.12);}
+    .panel-header{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--border);}
+    .pbadge{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.2rem .6rem;border-radius:2px;margin-bottom:.5rem;}
+    .pbadge.open{background:rgba(39,174,96,.15);color:var(--success);border:1px solid rgba(39,174,96,.3);}
+    .pbadge.closed{background:rgba(192,57,43,.15);color:var(--pepper-red);border:1px solid rgba(192,57,43,.3);}
+    .pbadge.unknown{background:rgba(122,140,130,.15);color:var(--text-muted);border:1px solid rgba(122,140,130,.3);}
+    .panel-name{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:1px;line-height:1;margin-bottom:.25rem;}
+    .panel-loc{font-size:.8rem;color:var(--text-muted);}
+    .panel-rating{display:flex;align-items:center;gap:.55rem;margin-top:.5rem;flex-wrap:wrap;}
+    .stars{color:var(--saffron);font-size:.88rem;}
+    .rnum{font-family:'Syne',sans-serif;font-weight:700;color:var(--saffron);}
+    .rcnt{font-size:.75rem;color:var(--text-muted);}
+    .panel-body{padding:.9rem 1.2rem;flex:1;}
+    .ps{margin-bottom:1.1rem;}
+    .ps h4{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem;}
+    .srow{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;}
+    .stext{font-size:.875rem;font-weight:500;}
+    .stime{font-size:.72rem;color:var(--text-muted);margin-top:.15rem;}
+    .bgrp{display:flex;gap:.45rem;}
+    .bcnf{padding:.4rem .8rem;border-radius:3px;font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .18s;}
+    .bcnf.open-btn{border-color:var(--success);color:var(--success);background:rgba(39,174,96,.08);}
+    .bcnf.open-btn:hover{background:rgba(39,174,96,.2);}
+    .bcnf.closed-btn{border-color:var(--pepper-red);color:var(--pepper-red);background:rgba(192,57,43,.08);}
+    .bcnf.closed-btn:hover{background:rgba(192,57,43,.2);}
+    .hgrid{display:flex;flex-direction:column;gap:.35rem;}
+    .hrow{display:flex;justify-content:space-between;font-size:.82rem;}
+    .hday{color:var(--text-muted);}
+    .sppick{display:flex;gap:.4rem;}
+    .sppick span{font-size:1.5rem;cursor:pointer;transition:transform .1s;color:var(--text-muted);}
+    .sppick span:hover,.sppick span.lit{color:var(--saffron);transform:scale(1.2);}
+    .clist{display:flex;flex-direction:column;gap:.65rem;}
+    .cm{padding:.65rem;background:rgba(255,248,236,.03);border-radius:3px;border-left:2px solid var(--saffron);}
+    .cmeta{display:flex;align-items:center;gap:.45rem;margin-bottom:.25rem;flex-wrap:wrap;}
+    .cuser{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;}
+    .cstars{color:var(--saffron);font-size:.7rem;}
+    .ctime{font-size:.65rem;color:var(--text-muted);margin-left:auto;}
+    .ctxt{font-size:.8rem;color:rgba(255,248,236,.7);line-height:1.5;}
+    .addcm{display:flex;gap:.45rem;margin-top:.65rem;}
+    .addcm input{flex:1;padding:.5rem .8rem;background:rgba(255,248,236,.05);border:1px solid var(--border);border-radius:3px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;transition:border-color .2s;}
+    .addcm input:focus{border-color:var(--saffron);}
+    .addcm input::placeholder{color:var(--text-muted);}
+    .addcm button{padding:.5rem .85rem;background:var(--saffron);color:var(--dark);border:none;border-radius:3px;font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:background .2s;}
+    .addcm button:hover{background:var(--turmeric);}
+    .panel-actions{display:flex;gap:.5rem;padding:.9rem 1.2rem;border-top:1px solid var(--border);flex-shrink:0;}
+    .btn-action{flex:1;padding:.6rem;border-radius:3px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .18s;text-align:center;}
+    .btn-save{border-color:var(--saffron);color:var(--saffron);background:rgba(244,163,0,.06);}
+    .btn-save:hover,.btn-save.saved{background:var(--saffron);color:var(--dark);}
+    .btn-dir{border-color:rgba(255,248,236,.2);color:var(--cream);background:rgba(255,248,236,.04);}
+    .btn-dir:hover{border-color:var(--saffron);color:var(--saffron);}
 
-    /* panel to display info */
-    .info-panel {
-      position: absolute; top: var(--nav-h); right: 0; bottom: 0;
-      width: 360px; background: var(--dark2);
-      border-left: 1px solid var(--border);
-      overflow-y: auto; z-index: 150;
-      transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-      display: flex; flex-direction: column;
-    }
-    .info-panel.open { transform: translateX(0); }
-    .info-panel::-webkit-scrollbar { width: 4px; }
-    .info-panel::-webkit-scrollbar-thumb { background: rgba(244,163,0,0.2); border-radius: 99px; }
-    .panel-close {
-      position: absolute; top: 0.8rem; right: 0.8rem;
-      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-      color: var(--cream); width: 28px; height: 28px; border-radius: 50%;
-      cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .panel-close:hover { background: rgba(255,255,255,0.12); }
-    .panel-header { padding: 1.25rem 1.25rem 0.75rem; border-bottom: 1px solid var(--border); }
-    .panel-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-      padding: 0.2rem 0.6rem; border-radius: 2px; margin-bottom: 0.6rem;
-    }
-    .panel-badge.open { background: rgba(39,174,96,0.15); color: var(--success); border: 1px solid rgba(39,174,96,0.3); }
-    .panel-badge.closed { background: rgba(192,57,43,0.15); color: var(--pepper-red); border: 1px solid rgba(192,57,43,0.3); }
-    .panel-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 1px; line-height: 1; margin-bottom: 0.3rem; }
-    .panel-loc { font-size: 0.82rem; color: var(--text-muted); }
-    .panel-rating { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.6rem; }
-    .stars { color: var(--saffron); font-size: 0.9rem; }
-    .rating-num { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--saffron); }
-    .rating-count { font-size: 0.78rem; color: var(--text-muted); }
-    .panel-body { padding: 1rem 1.25rem; flex: 1; }
-    .panel-section { margin-bottom: 1.25rem; }
-    .panel-section h4 { font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.6rem; }
-    .status-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
-    .status-text { font-size: 0.875rem; font-weight: 500; }
-    .status-time { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
-    .btn-group { display: flex; gap: 0.5rem; }
-    .btn-confirm {
-      padding: 0.45rem 0.9rem; border-radius: 3px; font-family: 'Syne', sans-serif;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-      cursor: pointer; border: 1px solid; transition: all 0.18s;
-    }
-    .btn-confirm.open-btn { border-color: var(--success); color: var(--success); background: rgba(39,174,96,0.08); }
-    .btn-confirm.open-btn:hover { background: rgba(39,174,96,0.2); }
-    .btn-confirm.closed-btn { border-color: var(--pepper-red); color: var(--pepper-red); background: rgba(192,57,43,0.08); }
-    .btn-confirm.closed-btn:hover { background: rgba(192,57,43,0.2); }
-    .hours-grid { display: flex; flex-direction: column; gap: 0.4rem; }
-    .hours-row { display: flex; justify-content: space-between; font-size: 0.825rem; }
-    .hours-day { color: var(--text-muted); }
-    .hours-time { font-weight: 500; }
-    .menu-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .menu-tag { font-size: 0.78rem; padding: 0.3rem 0.75rem; border-radius: 2px; background: rgba(244,163,0,0.08); color: var(--cream); border: 1px solid rgba(244,163,0,0.2); }
-    .comment-list { display: flex; flex-direction: column; gap: 0.75rem; }
-    .comment { padding: 0.75rem; background: rgba(255,248,236,0.03); border-radius: 3px; border-left: 2px solid var(--saffron); }
-    .comment-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
-    .comment-user { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; }
-    .comment-stars { color: var(--saffron); font-size: 0.72rem; }
-    .comment-time { font-size: 0.68rem; color: var(--text-muted); margin-left: auto; }
-    .comment-text { font-size: 0.82rem; color: rgba(255,248,236,0.7); line-height: 1.5; }
-    .add-comment { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-    .add-comment input {
-      flex: 1; padding: 0.55rem 0.85rem;
-      background: rgba(255,248,236,0.05); border: 1px solid var(--border);
-      border-radius: 3px; color: var(--cream); font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem; outline: none; transition: border-color 0.2s;
-    }
-    .add-comment input:focus { border-color: var(--saffron); }
-    .add-comment input::placeholder { color: var(--text-muted); }
-    .add-comment button {
-      padding: 0.55rem 0.9rem; background: var(--saffron); color: var(--dark);
-      border: none; border-radius: 3px; font-family: 'Syne', sans-serif;
-      font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background 0.2s;
-    }
-    .add-comment button:hover { background: var(--turmeric); }
-    .rate-section { margin-bottom: 1.25rem; }
-    .star-picker { display: flex; gap: 0.4rem; }
-    .star-picker span { font-size: 1.5rem; cursor: pointer; transition: transform 0.1s; color: var(--text-muted); }
-    .star-picker span:hover, .star-picker span.lit { color: var(--saffron); transform: scale(1.2); }
-    .panel-actions { display: flex; gap: 0.6rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
-    .btn-action {
-      flex: 1; padding: 0.65rem; border-radius: 3px; font-family: 'Syne', sans-serif;
-      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-      cursor: pointer; border: 1px solid; transition: all 0.18s; text-align: center;
-    }
-    .btn-save { border-color: var(--saffron); color: var(--saffron); background: rgba(244,163,0,0.06); }
-    .btn-save:hover, .btn-save.saved { background: var(--saffron); color: var(--dark); }
-    .btn-directions { border-color: rgba(255,248,236,0.2); color: var(--cream); background: rgba(255,248,236,0.04); }
-    .btn-directions:hover { border-color: var(--saffron); color: var(--saffron); }
+    /* OVERLAY FOR LOCATION */
+    #loc-overlay{position:fixed;inset:0;background:rgba(14,26,20,.94);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+    .loc-card{background:#162310;border:1px solid var(--border);border-radius:6px;padding:2.5rem 2rem;max-width:400px;width:100%;text-align:center;}
+    .loc-icon{font-size:3.5rem;margin-bottom:1rem;animation:bounce 1.5s ease-in-out infinite;}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    .loc-card h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1.5px;margin-bottom:.6rem;}
+    .loc-card p{color:var(--text-muted);font-size:.88rem;line-height:1.6;margin-bottom:1.8rem;}
+    .btn-allow{width:100%;padding:.9rem;background:var(--saffron);color:var(--dark);font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer;margin-bottom:.75rem;transition:background .2s,transform .15s;box-shadow:0 4px 20px rgba(244,163,0,.3);}
+    .btn-allow:hover{background:var(--turmeric);transform:translateY(-1px);}
+    .btn-skip{width:100%;padding:.7rem;background:transparent;color:var(--text-muted);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:600;border:1px solid rgba(255,255,255,.1);border-radius:3px;cursor:pointer;transition:all .2s;}
+    .btn-skip:hover{border-color:var(--text-muted);color:var(--cream);}
 
-     /* TOAST */
-    #toast {
-      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: #1e3a2a; border: 1px solid rgba(244,163,0,0.3);
-      color: var(--cream); padding: 0.7rem 1.5rem; border-radius: 3px;
-      font-size: 0.85rem; font-weight: 500; z-index: 999;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-      pointer-events: none; white-space: nowrap;
-    }
-    #toast.show { transform: translateX(-50%) translateY(0); }
+    /* LOADING INFO */
+    #lbar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--saffron),var(--turmeric));z-index:300;display:none;}
+    #lbar.active{display:block;animation:lp 1.2s ease-in-out infinite;}
+    @keyframes lp{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 
-    /* BUTTON FOR LOCATION OF USER */
-    .locate-btn {
-      position: absolute; bottom: 120px; right: 380px;
-      background: var(--dark2); border: 1px solid var(--border);
-      color: var(--cream); padding: 0.6rem 1rem;
-      border-radius: 3px; cursor: pointer; z-index: 100;
-      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase;
-      transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;
-    }
-    .locate-btn:hover { border-color: var(--saffron); color: var(--saffron); }
+    #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#1e3a2a;border:1px solid rgba(244,163,0,.3);color:var(--cream);padding:.65rem 1.4rem;border-radius:3px;font-size:.84rem;font-weight:500;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;}
+    #toast.show{transform:translateX(-50%) translateY(0);}
 
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .info-panel { width: 100%; }
-      .locate-btn { right: 1rem; }
-    }
+    .locate-btn{position:absolute;bottom:90px;right:375px;background:var(--dark2);border:1px solid var(--border);color:var(--cream);padding:.55rem 1rem;border-radius:3px;cursor:pointer;z-index:100;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;display:flex;align-items:center;gap:.4rem;}
+    .locate-btn:hover{border-color:var(--saffron);color:var(--saffron);}
+
+    @media(max-width:768px){.sidebar{display:none;}.info-panel{width:100%;}.locate-btn{right:1rem;}}
   </style>
 </head>
 <body>
 
-    <! navigation >
+   <! OVERLAY FOR PERMISSION REQUEST >
+<div id="loc-overlay">
+  <div class="loc-card">
+    <div class="loc-icon">📍</div>
+    <h2>Find Doubles Near You</h2>
+    <p>Allow DoubleFinder to use your location to show the nearest doubles vendors across Trinidad — sorted by distance from where you are right now.</p>
+    <button class="btn-allow" onclick="requestLocation()">📍 Allow Location Access</button>
+    <button class="btn-skip"  onclick="skipLocation()">Browse All of Trinidad Instead</button>
+  </div>
+</div>
+
+<! NAVIGATION BAR >
 <nav>
   <a href="index.html" class="logo">Double<span>Finder</span></a>
   <ul class="nav-links">
     <li><a href="map.html" class="active">Find Doubles</a></li>
     <li><a href="leaderboard.html">Leaderboard</a></li>
+    <li><a href="profile.html">Profile</a></li>
     <li><a href="login.html">Log In</a></li>
     <li><a href="register.html" class="btn-sm">Sign Up</a></li>
   </ul>
 </nav>
 
-   <!APPLICATION BODY >
-<div class="app-body" style="position:relative;">
+<div class="app-body">
+  <div id="lbar"></div>
 
-   <! SIDEBAR FOR FILTERING LIST >
+  <! SIDEBAR NAVIGATION AND RESULTS>
   <div class="sidebar">
     <div class="sidebar-top">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input id="search-input" type="text" placeholder="Search vendors or areas…" oninput="filterList()">
+        <input id="search-input" type="text" placeholder="Search vendors or areas…" oninput="applyFilter()">
       </div>
       <div class="filter-row">
-        <button class="chip active" data-filter="all"    onclick="setFilter('all',this)">All</button>
-        <button class="chip"        data-filter="open"   onclick="setFilter('open',this)">Open Now</button>
-        <button class="chip"        data-filter="rated"  onclick="setFilter('rated',this)">Top Rated</button>
-        <button class="chip"        data-filter="nearby" onclick="setFilter('nearby',this)">Nearest</button>
+        <button class="chip active" onclick="setFilter('all',this)">All</button>
+        <button class="chip"        onclick="setFilter('open',this)">Open Now</button>
+        <button class="chip"        onclick="setFilter('rated',this)">Top Rated</button>
+        <button class="chip"        onclick="setFilter('nearby',this)">Nearest</button>
       </div>
     </div>
-    <div class="vendor-list" id="vendor-list"></div>
+    <div class="result-bar" id="result-bar">Searching for vendors…</div>
+    <div class="vendor-list" id="vendor-list">
+      <div class="no-results">🍛 Loading doubles vendors…</div>
+    </div>
+    <div class="page-strip" id="page-strip" style="display:none;">
+      <span id="page-label">Page 1</span>
+      <div class="pbr" id="pbr"></div>
+    </div>
   </div>
 
-
+  <! MAP >
   <div id="map"></div>
 
-  <! MY LOCATION >
-  <button class="locate-btn" onclick="locateMe()">📍 My Location</button>
+  <button class="locate-btn" onclick="recenter()">📍 My Location</button>
 
-  <! PANEL FOR INFO ON VENDORS > 
+  <! PANEL FOR VENDOR INFO >
   <div class="info-panel" id="info-panel">
     <button class="panel-close" onclick="closePanel()">✕</button>
     <div id="panel-content"></div>
     <div class="panel-actions" id="panel-actions" style="display:none;">
-      <button class="btn-action btn-save"       id="btn-save"       onclick="toggleSave()">♡ Save</button>
-      <button class="btn-action btn-directions" id="btn-directions" onclick="openDirections()">↗ Directions</button>
+      <button class="btn-action btn-save" id="btn-save" onclick="toggleSave()">♡ Save</button>
+      <button class="btn-action btn-dir"  onclick="openDirections()">↗ Directions</button>
     </div>
   </div>
-
 </div>
-
 
 <div id="toast"></div>
 
-<! DATA LIST >
-
 <script>
-const VENDORS = [
-  {
-    id:'v1', name:"Ali's Doubles", location:"EMR Road, Chaguanas", landmark:"Near TSTT office",
-    lat:10.5168, lng:-61.4007, isOpen:true, est:2011, distance:0.3,
-    lastUpdate:'4 min ago', updatedBy:'trini_foodie',
-    rating:4.9, numRatings:142,
-    sells:['Doubles','Bara only','Channa'],
-    hours:{ monFri:'5:30am – 8:00am', sat:'6:00am – 9:00am', sun:'Closed' },
-    notes:'Sells out fast on weekdays!',
-    comments:[
-      { user:'trini_foodie', rating:5, text:'Best bara in Chaguanas. Pepper sauce is fire!', time:'2 days ago' },
-      { user:'Kamla_TT',     rating:4, text:'Slight peppah and extra channa hits different.', time:'5 days ago' },
-    ]
-  },
-  {
-    id:'v2', name:"D-Man's Corner", location:"Wrightson Road, POS", landmark:"Near Port Authority",
-    lat:10.6497, lng:-61.5099, isOpen:true, est:2015, distance:0.7,
-    lastUpdate:'11 min ago', updatedBy:'SarahK',
-    rating:4.6, numRatings:89,
-    sells:['Doubles','Pholourie','Channa'],
-    hours:{ monFri:'6:00am – 9:00am', sat:'6:30am – 10:00am', sun:'7:00am – 11:00am' },
-    notes:'Slight pepper is the move.',
-    comments:[
-      { user:'SarahK', rating:5, text:'D-Man never misses. Consistent every morning.', time:'1 day ago' },
-    ]
-  },
-  {
-    id:'v3', name:'Sauce Boss', location:'Tunapuna Main Road', landmark:'Opposite library',
-    lat:10.6384, lng:-61.3819, isOpen:false, est:2009, distance:1.1,
-    lastUpdate:'2 hrs ago', updatedBy:'JennyD',
-    rating:5.0, numRatings:203,
-    sells:['Doubles','Pholourie','Bara only'],
-    hours:{ monFri:'5:00am – 7:30am', sat:'5:30am – 8:30am', sun:'Closed' },
-    notes:'THE best doubles in East Trinidad.',
-    comments:[
-      { user:'JennyD',      rating:5, text:'Perfect score for a reason. Unmatched!', time:'3 days ago' },
-      { user:'DoublesDave', rating:5, text:'5 stars is too low. Legendary spot.', time:'1 week ago' },
-    ]
-  },
-  {
-    id:'v4', name:'Trini Doubles Hub', location:'San Fernando Main Road', landmark:'Near Skinner Park',
-    lat:10.2800, lng:-61.4668, isOpen:true, est:2018, distance:1.8,
-    lastUpdate:'22 min ago', updatedBy:'PaulC',
-    rating:4.4, numRatings:67,
-    sells:['Doubles','Channa'],
-    hours:{ monFri:'6:30am – 9:30am', sat:'7:00am – 11:00am', sun:'7:00am – 10:00am' },
-    notes:'Great for San Fernando.',
-    comments:[
-      { user:'PaulC', rating:4, text:'Solid spot in Sando. Good value.', time:'2 days ago' },
-    ]
-  },
-  {
-    id:'v5', name:"Mavis Doubles", location:"St. James Main Road", landmark:"Near Smokey & Bunty",
-    lat:10.6500, lng:-61.4400, isOpen:true, est:2005, distance:0.5,
-    lastUpdate:'8 min ago', updatedBy:'DoublesDave',
-    rating:4.7, numRatings:118,
-    sells:['Doubles','Bara only'],
-    hours:{ monFri:'5:30am – 9:00am', sat:'5:30am – 10:00am', sun:'6:00am – 10:00am' },
-    notes:'Open Sunday! Rare find.',
-    comments:[
-      { user:'DoublesDave', rating:5, text:'Open on Sunday is a blessing. Quality never drops.', time:'3 days ago' },
-    ]
-  },
+
+/*CONSTANTS*/
+const API_KEY    = 'AIzaSyATnemg7sJtXZs8O65pa2LJuH7F5UQSjNw';
+const TT_CENTER  = { lat:10.5209, lng:-61.3900 };
+const PAGE_SIZE  = 10;
+// Up to 3 keyword searches × up to 3 pages × 20 results = up to 180 candidate places
+const KW_LIST    = ['doubles', 'bara channa', 'doubles vendor'];
+
+/*STATE VARIABLES*/
+let map, svc, markers={}, infoWindows={};
+let userLoc      = null;
+let allVendors   = [];
+let displayList  = [];
+let curFilter    = 'all';
+let curPage      = 0;
+let selectedId   = null;
+let seenIds      = new Set();
+let savedIds     = JSON.parse(localStorage.getItem('df_saved')   ||'[]');
+let userRatings  = JSON.parse(localStorage.getItem('df_ratings') ||'{}');
+let userComments = JSON.parse(localStorage.getItem('df_comments')||'{}');
+
+/*SEED DATA*/
+const SEEDS = [
+  {id:'s1',name:"Ali's Doubles",        loc:"EMR Road, Chaguanas",          lat:10.5168,lng:-61.4007,open:true, r:4.9,n:142, sells:['Doubles','Bara only','Channa'],  notes:'Sells out fast weekdays!',    h:{mf:'5:30am–8:00am',sa:'6:00am–9:00am',su:'Closed'},
+   comments:[{u:'trini_foodie',r:5,t:'Best bara in Chaguanas!',time:'2 days ago'},{u:'Kamla_TT',r:4,t:'Extra channa hits different.',time:'5 days ago'}]},
+  {id:'s2',name:"D-Man's Corner",       loc:"Wrightson Road, POS",           lat:10.6497,lng:-61.5099,open:true, r:4.6,n:89,  sells:['Doubles','Pholourie','Channa'],  notes:'Slight pepper is the move.',  h:{mf:'6:00am–9:00am',sa:'6:30am–10:00am',su:'7:00am–11:00am'},
+   comments:[{u:'SarahK',r:5,t:'D-Man never misses.',time:'1 day ago'}]},
+  {id:'s3',name:"Sauce Boss",           loc:"Tunapuna Main Road",            lat:10.6384,lng:-61.3819,open:false,r:5.0,n:203, sells:['Doubles','Pholourie','Bara only'], notes:'THE best in East TT.',       h:{mf:'5:00am–7:30am',sa:'5:30am–8:30am',su:'Closed'},
+   comments:[{u:'JennyD',r:5,t:'Perfect score for a reason!',time:'3 days ago'},{u:'DoublesDave',r:5,t:'5 stars is too low.',time:'1 week ago'}]},
+  {id:'s4',name:"Trini Doubles Hub",    loc:"San Fernando Main Road",        lat:10.2800,lng:-61.4668,open:true, r:4.4,n:67,  sells:['Doubles','Channa'],              notes:'Great for San Fernando.',     h:{mf:'6:30am–9:30am',sa:'7:00am–11:00am',su:'7:00am–10:00am'},
+   comments:[{u:'PaulC',r:4,t:'Solid spot in Sando.',time:'2 days ago'}]},
+  {id:'s5',name:"Mavis Doubles",        loc:"St. James Main Road",           lat:10.6500,lng:-61.4400,open:true, r:4.7,n:118, sells:['Doubles','Bara only'],           notes:'Open Sunday! Rare find.',     h:{mf:'5:30am–9:00am',sa:'5:30am–10:00am',su:'6:00am–10:00am'},
+   comments:[{u:'DoublesDave',r:5,t:'Open Sunday is a blessing.',time:'3 days ago'}]},
+  {id:'s6',name:"Chaguanas Doubles King",loc:"Montrose Rd, Chaguanas",       lat:10.5060,lng:-61.3980,open:true, r:4.8,n:524, sells:['Doubles','Channa','Pholourie'], notes:'Huge portions.',              h:{mf:'5:00am–9:00am',sa:'5:00am–10:00am',su:'6:00am–9:00am'},
+   comments:[{u:'roti_rover',r:5,t:'Biggest doubles on the island.',time:'4 hours ago'}]},
+  {id:'s7',name:"Curepe Express",       loc:"Eastern Main Rd, Curepe",       lat:10.6350,lng:-61.4050,open:true, r:4.8,n:401, sells:['Doubles','Bara only'],           notes:'Queue moves fast.',           h:{mf:'5:30am–8:30am',sa:'6:00am–9:00am',su:'Closed'},
+   comments:[{u:'PepperQueen',r:5,t:'Queue fast, doubles faster.',time:'Yesterday'}]},
+  {id:'s8',name:"Maraval Morning Stop", loc:"Maraval Rd, Port of Spain",     lat:10.6700,lng:-61.5200,open:true, r:4.7,n:220, sells:['Doubles','Channa'],              notes:'Always fresh, always on time.',h:{mf:'5:30am–8:00am',sa:'6:00am–9:00am',su:'Closed'},
+   comments:[{u:'baraboy99',r:5,t:'My morning ritual for 3 years.',time:'Today'}]},
+  {id:'s9',name:"Fyzabad Road Doubles", loc:"Southern Main Rd, Fyzabad",     lat:10.1500,lng:-61.5200,open:true, r:4.5,n:187, sells:['Doubles'],                      notes:'Worth the drive south.',      h:{mf:'6:00am–9:00am',sa:'6:00am–10:00am',su:'Closed'},
+   comments:[{u:'channa_man',r:5,t:'Hidden gem in the south.',time:'4 days ago'}]},
+  {id:'s10',name:"Arima Junction Doubles",loc:"Arima Old Rd, Arima",         lat:10.6360,lng:-61.2830,open:true, r:4.3,n:98,  sells:['Doubles','Pholourie'],          notes:'East Trinidad locals swear by this.',h:{mf:'5:30am–8:30am',sa:'6:00am–9:00am',su:'Closed'},
+   comments:[{u:'JennyD',r:4,t:'Solid roadside spot.',time:'1 week ago'}]},
 ];
 
-
-let currentFilter = 'all';
-let selectedId    = null;
-let savedIds      = JSON.parse(localStorage.getItem('df_saved') || '[]');
-let userRatings   = JSON.parse(localStorage.getItem('df_ratings') || '{}');
-let map, markers  = {}, infoWindows = {}, userLocation = null;
-
-
-function starsHTML(n) {
-  n = Math.round(parseFloat(n) * 2) / 2;
-  let s = '';
-  for (let i = 1; i <= 5; i++) s += i <= n ? '★' : (i - 0.5 === n ? '½' : '☆');
-  return s;
+/*DATA FOR LEADERBOARD*/
+function getLb() {
+  return JSON.parse(localStorage.getItem('df_lb') || JSON.stringify(
+    SEEDS.map(v=>({id:v.id,name:v.name,loc:v.loc,rating:v.r,numRatings:v.n,visits:Math.floor(v.n*18),isOpen:v.open}))
+  ));
+}
+function saveLb(d){ localStorage.setItem('df_lb',JSON.stringify(d)); }
+function syncLb(id,patch){
+  const lb=getLb(), row=lb.find(r=>r.id===id);
+  if(row){Object.assign(row,patch);saveLb(lb);}
+  else{const v=allVendors.find(x=>x.id===id);if(v)lb.push({id,name:v.name||'Unknown',loc:v.loc||'',rating:v.r||0,numRatings:v.n||0,visits:1,isOpen:v.open||false,...patch});saveLb(lb);}
 }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2600);
+/*HELPER FUNCTIONS*/
+function starsHTML(n){n=Math.round(parseFloat(n||0)*2)/2;let s='';for(let i=1;i<=5;i++)s+=i<=n?'★':(i-.5===n?'½':'☆');return s;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
+function loading(on){document.getElementById('lbar').classList.toggle('active',on);}
+function dist(a,b){const R=6371,dLat=(b.lat-a.lat)*Math.PI/180,dLon=(b.lng-a.lng)*Math.PI/180,x=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLon/2)**2;return+(R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))).toFixed(1);}
+function statusOf(v){if(v.phOpen){try{return v.phOpen.isOpen()?'open':'closed';}catch(e){}}if(typeof v.open==='boolean')return v.open?'open':'closed';return'unknown';}
+function isOpenV(v){return statusOf(v)==='open';}
+
+/*OVERLAY FOR LOCATION PERMISSION */
+function requestLocation(){
+  document.getElementById('loc-overlay').style.display='none';
+  loading(true);
+  if(!navigator.geolocation){skipLocation();return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userLoc={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    bootMap(userLoc,13);
+  },()=>{toast('Location unavailable — showing all of Trinidad');skipLocation();},{timeout:8000});
+}
+function skipLocation(){
+  document.getElementById('loc-overlay').style.display='none';
+  loading(true);
+  bootMap(TT_CENTER,10);
 }
 
-/* lIST FILTERING */
-function getFiltered() {
-  const q = document.getElementById('search-input').value.toLowerCase().trim();
-  let list = VENDORS.filter(v =>
-    !q || v.name.toLowerCase().includes(q) || v.location.toLowerCase().includes(q)
-  );
-  if (currentFilter === 'open')   list = list.filter(v => v.isOpen);
-  if (currentFilter === 'rated')  list = [...list].sort((a,b) => b.rating - a.rating);
-  if (currentFilter === 'nearby') list = [...list].sort((a,b) => a.distance - b.distance);
-  return list;
-}
+/*BOOTSTRAP FOR MAP*/
+function bootMap(center,zoom){
+  map=new google.maps.Map(document.getElementById('map'),{
+    zoom,center,
+    mapTypeId:'roadmap',
+    styles:[
+      {elementType:'geometry',stylers:[{color:'#1a2f20'}]},
+      {elementType:'labels.text.fill',stylers:[{color:'#8a9e8f'}]},
+      {elementType:'labels.text.stroke',stylers:[{color:'#1a2f20'}]},
+      {featureType:'road',elementType:'geometry',stylers:[{color:'#253a28'}]},
+      {featureType:'road',elementType:'geometry.stroke',stylers:[{color:'#1a2f20'}]},
+      {featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#9ca5aa'}]},
+      {featureType:'road.highway',elementType:'geometry',stylers:[{color:'#2d5a3d'}]},
+      {featureType:'road.highway',elementType:'geometry.stroke',stylers:[{color:'#1f4a2e'}]},
+      {featureType:'road.highway',elementType:'labels.text.fill',stylers:[{color:'#f3d19c'}]},
+      {featureType:'water',elementType:'geometry',stylers:[{color:'#0e2020'}]},
+      {featureType:'poi',elementType:'geometry',stylers:[{color:'#1c3a22'}]},
+      {featureType:'poi.park',elementType:'geometry',stylers:[{color:'#1e3c25'}]},
+    ],
+    disableDefaultUI:true,
+    zoomControl:true,
+    zoomControlOptions:{position:google.maps.ControlPosition.RIGHT_BOTTOM},
+    fullscreenControl:true,
+    fullscreenControlOptions:{position:google.maps.ControlPosition.RIGHT_TOP},
+  });
 
-function setFilter(f, el) {
-  currentFilter = f;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderList();
-}
+  svc=new google.maps.places.PlacesService(map);
 
-function filterList() { renderList(); }
-
-function renderList() {
-  const el = document.getElementById('vendor-list');
-  const list = getFiltered();
-  if (!list.length) {
-    el.innerHTML = '<div class="no-results">No vendors found</div>'; return;
+  //POSITION MARKER FOR USER LOCATION
+  if(userLoc){
+    new google.maps.Marker({position:userLoc,map,title:'You are here',zIndex:999,
+      icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:'#4285F4',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}});
   }
-  el.innerHTML = list.map(v => `
-    <div class="vendor-card${selectedId === v.id ? ' selected' : ''}" onclick="selectVendor('${v.id}')">
-      <div class="vc-top">
-        <div class="vc-name">${v.name}</div>
-        <div class="status-dot ${v.isOpen ? 'open' : 'closed'}"></div>
-      </div>
-      <div class="vc-loc">📍 ${v.location}</div>
+
+  // LOADS SEEDS DATA IMMEDIATELY
+  allVendors=SEEDS.map(v=>({
+    ...v, distance:userLoc?dist(userLoc,{lat:v.lat,lng:v.lng}):null, source:'seed',
+    comments:[...(userComments[v.id]||[]),...(v.comments||[])],
+  }));
+  SEEDS.forEach(v=>seenIds.add(v.id));
+  dropMarkers(allVendors);
+  applyFilter();
+  loading(false);
+
+  // FETCH REAL PLACES DATA
+  fetchPlaces(userLoc||center);
+}
+
+
+function initMap(){}
+
+/* SEARCH FOR PLACES  */
+function fetchPlaces(center){
+  const searchPt=new google.maps.LatLng(center.lat,center.lng);
+  KW_LIST.forEach(kw=>{
+    const req={location:searchPt,radius:45000,keyword:kw,type:'food'};
+    doSearch(req,0);
+  });
+}
+
+function doSearch(req,page){
+  svc.nearbySearch(req,(results,status,pag)=>{
+    if(status===google.maps.places.PlacesServiceStatus.OK&&results){
+      ingestPlaces(results);
+    }
+    if(pag&&pag.hasNextPage&&page<2){
+      setTimeout(()=>pag.nextPage(),2100); 
+    }
+  });
+}
+
+function ingestPlaces(results){
+  const fresh=[];
+  results.forEach(p=>{
+    if(seenIds.has(p.place_id))return;
+
+    const ll={lat:p.geometry.location.lat(),lng:p.geometry.location.lng()};
+    if(allVendors.some(v=>v.source==='seed'&&dist(ll,{lat:v.lat,lng:v.lng})<0.15))return;
+    seenIds.add(p.place_id);
+    fresh.push({
+      id:p.place_id, name:p.name, loc:p.vicinity||'Trinidad',
+      lat:p.geometry.location.lat(), lng:p.geometry.location.lng(),
+      open:p.opening_hours?p.opening_hours.isOpen():null,
+      phOpen:p.opening_hours||null,
+      r:p.rating||null, n:p.user_ratings_total||0,
+      sells:['Doubles'], notes:'', h:{mf:'See Google Maps',sa:'See Google Maps',su:'See Google Maps'},
+      comments:userComments[p.place_id]||[],
+      distance:userLoc?dist(userLoc,{lat:p.geometry.location.lat(),lng:p.geometry.location.lng()}):null,
+      source:'places',
+    });
+  });
+  if(fresh.length){
+    allVendors=[...allVendors,...fresh];
+    dropMarkers(fresh);
+    applyFilter();
+  }
+}
+
+/*MARKER FUNCTIONS*/
+function mkIcon(st){
+  const c=st==='open'?'#27AE60':st==='closed'?'#C0392B':'#7A8C82';
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="40" height="48" viewBox="0 0 40 48"><path d="M20 0C9 0 0 9 0 20c0 15 20 28 20 28s20-13 20-28C40 9 31 0 20 0z" fill="${c}"/><circle cx="20" cy="20" r="9" fill="white" opacity=".9"/><text x="20" y="25" text-anchor="middle" font-size="12">🍛</text></svg>`;
+  return{url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg),scaledSize:new google.maps.Size(28,34),anchor:new google.maps.Point(14,34)};
+}
+
+function dropMarkers(vendors){
+  vendors.forEach(v=>{
+    if(markers[v.id])return;
+    const st=statusOf(v);
+    const m=new google.maps.Marker({position:{lat:v.lat,lng:v.lng},map,title:v.name,icon:mkIcon(st),animation:google.maps.Animation.DROP});
+    const iw=new google.maps.InfoWindow({content:`<div style="font-family:'DM Sans',sans-serif;padding:2px 4px;color:#0E1A14;min-width:150px;"><strong style="font-size:.88rem;">${v.name}</strong><br><span style="font-size:.75rem;color:#555;">${v.loc}</span><br><span style="color:${st==='open'?'#27AE60':st==='closed'?'#C0392B':'#999'};font-size:.78rem;font-weight:600;">● ${st==='open'?'Open':st==='closed'?'Closed':'Unknown'}</span>${v.r?` <span style="font-size:.75rem;color:#888;">★ ${v.r}</span>`:''}</div>`});
+    m.addListener('click',()=>{Object.values(infoWindows).forEach(x=>x.close());iw.open(map,m);selectVendor(v.id);});
+    markers[v.id]=m; infoWindows[v.id]=iw;
+  });
+}
+
+/*FILTERING AND RENDERING DATA*/
+function applyFilter(){
+  const q=document.getElementById('search-input').value.toLowerCase().trim();
+  let list=allVendors.filter(v=>!q||v.name.toLowerCase().includes(q)||v.loc.toLowerCase().includes(q));
+  if(curFilter==='open')  list=list.filter(v=>isOpenV(v));
+  if(curFilter==='rated') list=[...list].sort((a,b)=>(b.r||0)-(a.r||0));
+  if(curFilter==='nearby')list=[...list].sort((a,b)=>(a.distance??9999)-(b.distance??9999));
+  displayList=list; curPage=0;
+  renderPage();
+  const rb=document.getElementById('result-bar');
+  rb.innerHTML=`<span>${list.length}</span> vendors found${userLoc?' near you':' across Trinidad'}`;
+}
+
+function setFilter(f,el){
+  curFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  if(el)el.classList.add('active');
+  applyFilter();
+}
+
+function renderPage(){
+  const el=document.getElementById('vendor-list');
+  const start=curPage*PAGE_SIZE, slice=displayList.slice(start,start+PAGE_SIZE);
+  const total=Math.ceil(displayList.length/PAGE_SIZE);
+
+  if(!slice.length){el.innerHTML='<div class="no-results">No vendors found.</div>';document.getElementById('page-strip').style.display='none';return;}
+
+  el.innerHTML=slice.map(v=>{
+    const st=statusOf(v), dc=st==='open'?'open':st==='closed'?'closed':'unknown';
+    return`<div class="vendor-card${selectedId===v.id?' selected':''}" onclick="selectVendor('${v.id}')">
+      <div class="vc-top"><div class="vc-name">${v.name}</div><div class="sdot ${dc}"></div></div>
+      <div class="vc-loc">📍 ${v.loc}</div>
       <div class="vc-meta">
-        <span class="vc-rating">★ ${v.rating}</span>
-        <span class="vc-dist">${v.distance} km</span>
-        <span class="vc-updated">· ${v.lastUpdate}</span>
+        ${v.r?`<span class="vc-rating">★ ${v.r}</span>`:''}
+        ${v.distance!==null?`<span class="vc-dist">${v.distance} km</span>`:''}
+        ${v.n?`<span class="vc-reviews">${v.n} reviews</span>`:''}
       </div>
-      <div class="vc-tags">${v.sells.map(s => `<span class="tag">${s}</span>`).join('')}</div>
-    </div>
-  `).join('');
+      <div class="vc-tags">${v.sells.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+
+  const strip=document.getElementById('page-strip');
+  strip.style.display=total>1?'flex':'none';
+  document.getElementById('page-label').textContent=`Page ${curPage+1} of ${total}`;
+  const pbr=document.getElementById('pbr');
+  pbr.innerHTML='';
+  const prev=Object.assign(document.createElement('button'),{className:'pdot',textContent:'‹',disabled:curPage===0,onclick:()=>{curPage--;renderPage();}});
+  pbr.appendChild(prev);
+  const ws=Math.max(0,curPage-2),we=Math.min(total,ws+5);
+  for(let i=ws;i<we;i++){const b=document.createElement('button');b.className='pdot'+(i===curPage?' active':'');b.textContent=i+1;b.onclick=((_i)=>()=>{curPage=_i;renderPage();})(i);pbr.appendChild(b);}
+  const next=Object.assign(document.createElement('button'),{className:'pdot',textContent:'›',disabled:curPage>=total-1,onclick:()=>{curPage++;renderPage();}});
+  pbr.appendChild(next);
 }
 
-/* FINDING VENDOR */
-function selectVendor(id) {
-  selectedId = id;
-  renderList();
-  const v = VENDORS.find(x => x.id === id);
-  if (!v) return;
-
-  /* GOES TO VENDOR */
-  if (map) {
-    map.panTo({ lat: v.lat, lng: v.lng });
-    map.setZoom(15);
-      
-    Object.values(infoWindows).forEach(iw => iw.close());
-    if (infoWindows[id]) infoWindows[id].open(map, markers[id]);
-  }
-
+/*SELECTING VENDORS*/
+function selectVendor(id){
+  selectedId=id; renderPage();
+  const v=allVendors.find(x=>x.id===id);
+  if(!v)return;
+  if(map){map.panTo({lat:v.lat,lng:v.lng});map.setZoom(15);Object.values(infoWindows).forEach(iw=>iw.close());if(infoWindows[id])infoWindows[id].open(map,markers[id]);}
+  syncLb(id,{visits:(getLb().find(r=>r.id===id)?.visits||0)+1});
   openPanel(v);
 }
 
-/* INFO PANEL */
-function openPanel(v) {
-  const isSaved  = savedIds.includes(v.id);
-  const userStar = userRatings[v.id] || 0;
+/*PANEL INFO FUNCTION */
+function openPanel(v){
+  const saved=savedIds.includes(v.id), userStar=userRatings[v.id]||0, st=statusOf(v);
+  const allC=[...(userComments[v.id]||[]),...(v.comments||[])];
 
-  document.getElementById('panel-content').innerHTML = `
+  document.getElementById('panel-content').innerHTML=`
     <div class="panel-header">
-      <div class="panel-badge ${v.isOpen ? 'open' : 'closed'}">
-        <span>${v.isOpen ? '●' : '●'}</span> ${v.isOpen ? 'Open Now' : 'Closed'}
-      </div>
+      <div class="pbadge ${st}">● ${st==='open'?'Open Now':st==='closed'?'Closed':'Status Unknown'}</div>
       <div class="panel-name">${v.name}</div>
-      <div class="panel-loc">📍 ${v.location} · Est. ${v.est}</div>
+      <div class="panel-loc">📍 ${v.loc}</div>
       <div class="panel-rating">
-        <span class="stars">${starsHTML(v.rating)}</span>
-        <span class="rating-num">${v.rating}</span>
-        <span class="rating-count">(${v.numRatings} ratings)</span>
+        ${v.r?`<span class="stars">${starsHTML(v.r)}</span><span class="rnum">${v.r}</span><span class="rcnt">(${v.n} reviews)</span>`:'<span class="rcnt">No ratings yet — be first!</span>'}
+        ${v.distance!==null?`<span class="rcnt">· ${v.distance} km away</span>`:''}
       </div>
     </div>
-
     <div class="panel-body">
-
-      <div class="panel-section">
-        <h4>Community Status</h4>
-        <div class="status-row">
-          <div>
-            <div class="status-text">${v.isOpen ? '✅ Open right now' : '🔴 Currently closed'}</div>
-            <div class="status-time">Last confirmed ${v.lastUpdate} by ${v.updatedBy}</div>
-          </div>
-          <div class="btn-group">
-            <button class="btn-confirm open-btn"   onclick="confirmStatus('${v.id}', true)">✓ Open</button>
-            <button class="btn-confirm closed-btn" onclick="confirmStatus('${v.id}', false)">✗ Closed</button>
+      <div class="ps"><h4>Community Status</h4>
+        <div class="srow">
+          <div><div class="stext">${st==='open'?'✅ Open right now':st==='closed'?'🔴 Currently closed':'❓ Status unconfirmed'}</div>
+          ${v.updatedBy?`<div class="stime">Confirmed by ${v.updatedBy}</div>`:'<div class="stime">Be the first to confirm!</div>'}</div>
+          <div class="bgrp">
+            <button class="bcnf open-btn"   onclick="confirmStatus('${v.id}',true)">✓ Open</button>
+            <button class="bcnf closed-btn" onclick="confirmStatus('${v.id}',false)">✗ Closed</button>
           </div>
         </div>
       </div>
-
-      <div class="panel-section">
-        <h4>Rate this vendor</h4>
-        <div class="star-picker" id="star-picker">
-          ${[1,2,3,4,5].map(n => `
-            <span data-n="${n}" class="${userStar >= n ? 'lit' : ''}"
-              onclick="rateVendor('${v.id}', ${n})"
-              onmouseover="hoverStars(${n})"
-              onmouseout="resetStars(${userStar})">★</span>`
-          ).join('')}
+      <div class="ps"><h4>Rate This Vendor</h4>
+        <div class="sppick" id="sppick">
+          ${[1,2,3,4,5].map(n=>`<span class="${userStar>=n?'lit':''}" onclick="rateVendor('${v.id}',${n})" onmouseover="hvStars(${n})" onmouseout="rstStars(${userStar})">★</span>`).join('')}
         </div>
       </div>
-
-      <div class="panel-section">
-        <h4>Hours</h4>
-        <div class="hours-grid">
-          <div class="hours-row"><span class="hours-day">Mon – Fri</span><span class="hours-time">${v.hours.monFri}</span></div>
-          <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">${v.hours.sat}</span></div>
-          <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">${v.hours.sun}</span></div>
+      <div class="ps"><h4>Hours</h4>
+        <div class="hgrid">
+          <div class="hrow"><span class="hday">Mon–Fri</span><span>${v.h.mf}</span></div>
+          <div class="hrow"><span class="hday">Saturday</span><span>${v.h.sa}</span></div>
+          <div class="hrow"><span class="hday">Sunday</span><span>${v.h.su}</span></div>
         </div>
       </div>
-
-      <div class="panel-section">
-        <h4>Menu Items</h4>
-        <div class="menu-tags">${v.sells.map(s => `<span class="menu-tag">${s}</span>`).join('')}</div>
-        ${v.notes ? `<p style="font-size:.78rem;color:var(--text-muted);margin-top:.6rem;font-style:italic;">💡 ${v.notes}</p>` : ''}
-      </div>
-
-      <div class="panel-section">
-        <h4>Comments</h4>
-        <div class="comment-list" id="comment-list">
-          ${v.comments.map(c => `
-            <div class="comment">
-              <div class="comment-meta">
-                <span class="comment-user">${c.user}</span>
-                <span class="comment-stars">${starsHTML(c.rating)}</span>
-                <span class="comment-time">${c.time}</span>
-              </div>
-              <div class="comment-text">${c.text}</div>
-            </div>`).join('')}
+      <div class="ps"><h4>Menu</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
+          ${v.sells.map(s=>`<span style="font-size:.78rem;padding:.3rem .75rem;border-radius:2px;background:rgba(244,163,0,.08);border:1px solid rgba(244,163,0,.2)">${s}</span>`).join('')}
         </div>
-        <div class="add-comment">
-          <input id="comment-input" type="text" placeholder="Add a comment… (Enter to post)"
-            onkeydown="if(event.key==='Enter') postComment('${v.id}')">
+        ${v.notes?`<p style="font-size:.76rem;color:var(--text-muted);margin-top:.5rem;font-style:italic;">💡 ${v.notes}</p>`:''}
+      </div>
+      <div class="ps"><h4>Comments (${allC.length})</h4>
+        <div class="clist" id="clist">
+          ${allC.length?allC.map(c=>`<div class="cm"><div class="cmeta"><span class="cuser">${c.u||c.user}</span><span class="cstars">${starsHTML(c.r||c.rating)}</span><span class="ctime">${c.time}</span></div><div class="ctxt">${c.t||c.text}</div></div>`).join(''):'<p style="font-size:.78rem;color:var(--text-muted);">No comments yet — be first!</p>'}
+        </div>
+        <div class="addcm">
+          <input id="cminput" type="text" placeholder="Add a comment… (Enter to post)" onkeydown="if(event.key==='Enter')postComment('${v.id}')">
           <button onclick="postComment('${v.id}')">Post</button>
         </div>
       </div>
+    </div>`;
 
-    </div>
-  `;
-
-  /* ACTION BAR UPDATING */
-  const actBar = document.getElementById('panel-actions');
-  const btnSave = document.getElementById('btn-save');
-  actBar.style.display = 'flex';
-  btnSave.textContent = isSaved ? '♥ Saved' : '♡ Save';
-  btnSave.classList.toggle('saved', isSaved);
-
+  const ab=document.getElementById('panel-actions'), bs=document.getElementById('btn-save');
+  ab.style.display='flex';
+  bs.textContent=saved?'♥ Saved':'♡ Save';
+  bs.classList.toggle('saved',saved);
   document.getElementById('info-panel').classList.add('open');
 }
 
-function closePanel() {
-  document.getElementById('info-panel').classList.remove('open');
-  selectedId = null;
-  renderList();
-  Object.values(infoWindows).forEach(iw => iw.close());
+function closePanel(){document.getElementById('info-panel').classList.remove('open');selectedId=null;renderPage();Object.values(infoWindows).forEach(iw=>iw.close());}
+
+/*CONFIRMING STATUS*/
+function confirmStatus(id,isOpen){
+  const user=JSON.parse(localStorage.getItem('df_user')||'null');
+  const v=allVendors.find(x=>x.id===id);
+  v.open=isOpen; v.updatedBy=user?user.username||user.name:'Anonymous';
+  if(markers[id])markers[id].setIcon(mkIcon(isOpen?'open':'closed'));
+  syncLb(id,{isOpen});
+  openPanel(v); renderPage();
+  toast(isOpen?'✅ Marked as Open — +10 pts!':'🔴 Marked as Closed — +10 pts!');
 }
 
-/* CONFIRMING STATUS */
-function confirmStatus(id, isOpen) {
-  const v = VENDORS.find(x => x.id === id);
-  v.isOpen = isOpen; v.lastUpdate = 'just now'; v.updatedBy = 'You';
-  // update marker icon
-  if (markers[id]) markers[id].setIcon(markerIcon(isOpen));
-  openPanel(v); renderList();
-  toast(isOpen ? '✅ Marked as Open — thanks!' : '🔴 Marked as Closed — thanks!');
+/*RATING SYSTEM*/
+function hvStars(n){document.querySelectorAll('#sppick span').forEach((s,i)=>s.classList.toggle('lit',i<n));}
+function rstStars(cur){document.querySelectorAll('#sppick span').forEach((s,i)=>s.classList.toggle('lit',i<cur));}
+function rateVendor(id,n){
+  const v=allVendors.find(x=>x.id===id);
+  v.r=Math.min(5,Math.round(((v.r||0)*v.n+n)/(v.n+1)*10)/10);
+  v.n++;
+  userRatings[id]=n; localStorage.setItem('df_ratings',JSON.stringify(userRatings));
+  syncLb(id,{rating:v.r,numRatings:v.n});
+  openPanel(v); renderPage();
+  toast(`Rated ${n}★ — +15 pts!`);
 }
 
-/* RATING SYSTEM */
-function hoverStars(n) {
-  document.querySelectorAll('#star-picker span').forEach((s,i) => {
-    s.classList.toggle('lit', i < n);
-  });
-}
-function resetStars(current) {
-  document.querySelectorAll('#star-picker span').forEach((s,i) => {
-    s.classList.toggle('lit', i < current);
-  });
-}
-function rateVendor(id, n) {
-  const v = VENDORS.find(x => x.id === id);
-  v.rating = Math.min(5, Math.round((v.rating * v.numRatings + n) / (v.numRatings + 1) * 10) / 10);
-  v.numRatings++;
-  userRatings[id] = n;
-  localStorage.setItem('df_ratings', JSON.stringify(userRatings));
-  openPanel(v); renderList();
-  toast(`Rated ${n}★ — thanks! You earned +15 pts`);
-}
-
-/* COMMENT SYSTEM */
-function postComment(id) {
-  const input = document.getElementById('comment-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  const v = VENDORS.find(x => x.id === id);
-  v.comments.unshift({ user:'You', rating: userRatings[id] || 5, text, time:'just now' });
-  input.value = '';
-  document.getElementById('comment-list').innerHTML = v.comments.map(c => `
-    <div class="comment">
-      <div class="comment-meta">
-        <span class="comment-user">${c.user}</span>
-        <span class="comment-stars">${starsHTML(c.rating)}</span>
-        <span class="comment-time">${c.time}</span>
-      </div>
-      <div class="comment-text">${c.text}</div>
-    </div>`).join('');
+/*COMMENT SYSTEM*/
+function postComment(id){
+  const user=JSON.parse(localStorage.getItem('df_user')||'null');
+  const input=document.getElementById('cminput'), txt=input.value.trim();
+  if(!txt)return;
+  const c={u:user?user.username||user.name:'Anonymous',r:userRatings[id]||5,t:txt,time:'just now'};
+  if(!userComments[id])userComments[id]=[];
+  userComments[id].unshift(c);
+  localStorage.setItem('df_comments',JSON.stringify(userComments));
+  input.value='';
+  const all=[...(userComments[id]||[]),...(allVendors.find(x=>x.id===id)?.comments||[])];
+  document.getElementById('clist').innerHTML=all.map(c=>`<div class="cm"><div class="cmeta"><span class="cuser">${c.u||c.user}</span><span class="cstars">${starsHTML(c.r||c.rating)}</span><span class="ctime">${c.time}</span></div><div class="ctxt">${c.t||c.text}</div></div>`).join('');
   toast('Comment posted! +5 pts');
 }
 
-/* SAVING DATA */
-function toggleSave() {
-  if (!selectedId) return;
-  const idx = savedIds.indexOf(selectedId);
-  if (idx === -1) { savedIds.push(selectedId); toast('Vendor saved! ♥'); }
-  else            { savedIds.splice(idx,1);     toast('Removed from saved'); }
-  localStorage.setItem('df_saved', JSON.stringify(savedIds));
-  const btn = document.getElementById('btn-save');
-  const isSaved = savedIds.includes(selectedId);
-  btn.textContent = isSaved ? '♥ Saved' : '♡ Save';
-  btn.classList.toggle('saved', isSaved);
+/*SAVING VENDORS*/
+function toggleSave(){
+  if(!selectedId)return;
+  const idx=savedIds.indexOf(selectedId);
+  if(idx===-1){savedIds.push(selectedId);toast('Vendor saved! ♥');}
+  else{savedIds.splice(idx,1);toast('Removed from saved');}
+  localStorage.setItem('df_saved',JSON.stringify(savedIds));
+  // Sync to df_favs (used by profile page)
+  const v=allVendors.find(x=>x.id===selectedId);
+  if(v){const favs=JSON.parse(localStorage.getItem('df_favs')||'[]');const fi=favs.findIndex(f=>f.id===selectedId);if(fi===-1)favs.push({id:v.id,name:v.name,address:v.loc,rating:v.r||0,open:isOpenV(v)});else favs.splice(fi,1);localStorage.setItem('df_favs',JSON.stringify(favs));}
+  const bs=document.getElementById('btn-save'); const s=savedIds.includes(selectedId);
+  bs.textContent=s?'♥ Saved':'♡ Save'; bs.classList.toggle('saved',s);
 }
 
-/* DIRECTIONS TO PLACE */
-function openDirections() {
-  if (!selectedId) return;
-  const v = VENDORS.find(x => x.id === selectedId);
-  const q = encodeURIComponent(v.name + ', ' + v.location + ', Trinidad');
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${q}`, '_blank');
+/*FINDING DIRECTIONS */
+function openDirections(){
+  if(!selectedId)return;
+  const v=allVendors.find(x=>x.id===selectedId);
+  const dest=v.source==='places'?`place_id:${v.id}`:encodeURIComponent(v.name+', '+v.loc+', Trinidad');
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`,'_blank');
 }
 
-/* LOCATING USER */
-function locateMe() {
-  if (!navigator.geolocation) { toast('Geolocation not supported'); return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-    if (map) {
-      map.panTo(userLocation); map.setZoom(14);
-      new google.maps.Marker({
-        position: userLocation, map,
-        title: 'You are here',
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 8, fillColor: '#4285F4', fillOpacity: 1,
-          strokeColor: '#fff', strokeWeight: 2
-        }
-      });
-    }
-    toast('📍 Located you!');
-   
-    VENDORS.forEach(v => {
-      const R = 6371;
-      const dLat = (v.lat - userLocation.lat) * Math.PI/180;
-      const dLon = (v.lng - userLocation.lng) * Math.PI/180;
-      const a = Math.sin(dLat/2)**2 + Math.cos(userLocation.lat*Math.PI/180) * Math.cos(v.lat*Math.PI/180) * Math.sin(dLon/2)**2;
-      v.distance = +(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
-    });
-    renderList();
-  }, () => toast('Could not get location'));
-}
-
-/* ICON MARKER */
-function markerIcon(isOpen) {
-  const color = isOpen ? '#27AE60' : '#C0392B';
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="48" viewBox="0 0 40 48">
-    <path d="M20 0C9 0 0 9 0 20c0 15 20 28 20 28s20-13 20-28C40 9 31 0 20 0z" fill="${color}"/>
-    <circle cx="20" cy="20" r="9" fill="white" opacity="0.9"/>
-    <text x="20" y="25" text-anchor="middle" font-size="12">🍛</text>
-  </svg>`;
-  return { url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg), scaledSize: new google.maps.Size(30, 36), anchor: new google.maps.Point(15, 36) };
-}
-
-/* MAP INITIALIZATION */
-function initMap() {
-  const center = { lat: 10.5209, lng: -61.3900 }; 
-
-  map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 10,
-    center,
-    mapTypeId: 'roadmap',
-    styles: [
-      { elementType:'geometry',       stylers:[{ color:'#1a2f20' }] },
-      { elementType:'labels.text.fill',stylers:[{ color:'#8a9e8f' }] },
-      { elementType:'labels.text.stroke',stylers:[{ color:'#1a2f20' }] },
-      { featureType:'road',             elementType:'geometry',       stylers:[{ color:'#253a28' }] },
-      { featureType:'road',             elementType:'geometry.stroke', stylers:[{ color:'#1a2f20' }] },
-      { featureType:'road',             elementType:'labels.text.fill',stylers:[{ color:'#9ca5aa' }] },
-      { featureType:'road.highway',     elementType:'geometry',       stylers:[{ color:'#2d5a3d' }] },
-      { featureType:'road.highway',     elementType:'geometry.stroke', stylers:[{ color:'#1f4a2e' }] },
-      { featureType:'road.highway',     elementType:'labels.text.fill',stylers:[{ color:'#f3d19c' }] },
-      { featureType:'water',            elementType:'geometry',       stylers:[{ color:'#0e2020' }] },
-      { featureType:'water',            elementType:'labels.text.fill',stylers:[{ color:'#515c6d' }] },
-      { featureType:'poi',              elementType:'geometry',       stylers:[{ color:'#1c3a22' }] },
-      { featureType:'poi.park',         elementType:'geometry',       stylers:[{ color:'#1e3c25' }] },
-      { featureType:'transit',          elementType:'geometry',       stylers:[{ color:'#1d3a22' }] },
-    ],
-    disableDefaultUI: true,
-    zoomControl: true,
-    zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
-    fullscreenControl: true,
-    fullscreenControlOptions: { position: google.maps.ControlPosition.RIGHT_TOP },
-  });
-
-  /* VENDOR MARKERS*/
-  VENDORS.forEach(v => {
-    const marker = new google.maps.Marker({
-      position: { lat: v.lat, lng: v.lng },
-      map,
-      title: v.name,
-      icon: markerIcon(v.isOpen),
-      animation: google.maps.Animation.DROP,
-    });
-
-    const iw = new google.maps.InfoWindow({
-      content: `<div style="font-family:'DM Sans',sans-serif;padding:2px 4px;color:#0E1A14;">
-        <strong style="font-size:.9rem;">${v.name}</strong><br>
-        <span style="font-size:.78rem;color:#555;">${v.location}</span><br>
-        <span style="color:${v.isOpen ? '#27AE60' : '#C0392B'};font-size:.8rem;font-weight:600;">
-          ${v.isOpen ? '● Open' : '● Closed'}
-        </span>
-        &nbsp;<span style="font-size:.78rem;color:#888;">★ ${v.rating}</span>
-      </div>`
-    });
-
-    marker.addListener('click', () => {
-      Object.values(infoWindows).forEach(x => x.close());
-      iw.open(map, marker);
-      selectVendor(v.id);
-    });
-
-    markers[v.id]     = marker;
-    infoWindows[v.id] = iw;
-  });
-
-  renderList();
+/*RECENTER USER*/
+function recenter(){
+  if(!navigator.geolocation){toast('Geolocation not supported');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    userLoc={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    map.panTo(userLoc); map.setZoom(14);
+    allVendors.forEach(v=>v.distance=dist(userLoc,{lat:v.lat,lng:v.lng}));
+    applyFilter(); toast('📍 Located you!');
+  },()=>toast('Could not get location'));
 }
 </script>
 
+
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyATnemg7sJtXZs8O65pa2LJuH7F5UQSjNw&callback=initMap&loading=async"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyATnemg7sJtXZs8O65pa2LJuH7F5UQSjNw&libraries=places&callback=initMap&loading=async"
   async defer>
 </script>
 
