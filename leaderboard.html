@@ -60,6 +60,22 @@
       letter-spacing: 3px; line-height: 1; position: relative;
     }
 
+    .data-source {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 1rem; position: relative;
+      font-family: 'Syne', sans-serif; font-size: 0.7rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid rgba(244,163,0,0.15);
+      padding: 0.3rem 0.8rem; border-radius: 99px;
+    }
+    .data-source .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--saffron);
+      animation: blink 1.8s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
     .tabs {
       display: flex; justify-content: center; gap: 0.5rem;
       padding: 0 2rem 2rem;
@@ -75,7 +91,56 @@
     .tab.active { background: var(--saffron); color: var(--dark); border-color: var(--saffron); }
     .tab:hover:not(.active) { border-color: var(--saffron); color: var(--cream); }
 
-    /* PODIUM */
+    .loading-overlay {
+      max-width: 900px; margin: 0 auto;
+      padding: 3rem 2rem; text-align: center;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 2px solid rgba(244,163,0,0.2);
+      border-top-color: var(--saffron);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'Syne', sans-serif; font-size: 0.8rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+
+    .error-box {
+      max-width: 600px; margin: 2rem auto;
+      padding: 1.5rem 2rem;
+      border: 1px solid rgba(192,57,43,0.3);
+      border-radius: 4px;
+      background: rgba(192,57,43,0.07);
+      text-align: center; display: none;
+    }
+    .error-box p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .retry-btn {
+      font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 0.5rem 1.2rem; border-radius: 2px;
+      background: var(--saffron); color: var(--dark);
+      border: none; cursor: pointer; transition: background 0.2s;
+    }
+    .retry-btn:hover { background: var(--turmeric); }
+
+
+    .stats-bar {
+      max-width: 900px; margin: 0 auto 1.5rem;
+      padding: 0 2rem;
+      display: flex; gap: 1rem; justify-content: flex-end;
+      font-family: 'Syne', sans-serif; font-size: 0.72rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .stats-bar span { color: var(--saffron); font-weight: 700; }
+
+
     .podium-section {
       max-width: 800px; margin: 0 auto; padding: 0 2rem 3rem;
     }
@@ -96,7 +161,7 @@
     .rank-1 .podium-avatar { border-color: var(--gold); background: rgba(255,215,0,0.1); }
     .rank-2 .podium-avatar { border-color: var(--silver); background: rgba(192,192,192,0.1); }
     .rank-3 .podium-avatar { border-color: var(--bronze); background: rgba(205,127,50,0.1); }
-    .podium-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; text-align: center; max-width: 100px; margin-bottom: 0.3rem; }
+    .podium-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem; text-align: center; max-width: 110px; margin-bottom: 0.3rem; line-height: 1.3; }
     .podium-score { font-family: 'Syne', sans-serif; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
     .podium-block {
       border-radius: 4px 4px 0 0;
@@ -108,11 +173,11 @@
     .rank-2 .podium-block { height: 95px; background: linear-gradient(180deg, rgba(192,192,192,0.15), rgba(192,192,192,0.03)); border: 1px solid rgba(192,192,192,0.2); color: var(--silver); }
     .rank-3 .podium-block { height: 70px; background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.03)); border: 1px solid rgba(205,127,50,0.2); color: var(--bronze); }
 
-    /* TABLE */
+
     .leaderboard-table { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
     .lb-row {
       display: grid;
-      grid-template-columns: 60px 1fr 80px 80px 80px 80px;
+      grid-template-columns: 60px 1fr 120px 100px 100px;
       align-items: center; gap: 0.5rem;
       padding: 1rem 1.5rem;
       border-bottom: 1px solid rgba(244,163,0,0.07);
@@ -137,9 +202,7 @@
     .lb-info { display: flex; flex-direction: column; gap: 0.2rem; }
     .lb-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; }
     .lb-location { color: var(--text-muted); font-size: 0.78rem; }
-    .lb-num {
-      text-align: center; font-size: 0.9rem;
-    }
+    .lb-num { text-align: center; font-size: 0.9rem; }
     .lb-rating { color: var(--saffron); font-weight: 600; }
     .lb-badge {
       display: inline-block;
@@ -148,15 +211,30 @@
       padding: 0.2rem 0.5rem; border-radius: 2px;
       margin-left: 0.4rem; vertical-align: middle;
     }
-    .badge-hot { background: rgba(192,57,43,0.2); color: var(--pepper-red); }
-    .badge-new { background: rgba(39,174,96,0.2); color: #27AE60; }
-    .badge-top { background: rgba(244,163,0,0.2); color: var(--saffron); }
-    .lb-trend { text-align: center; font-size: 0.85rem; }
-    .trend-up { color: #27AE60; }
-    .trend-down { color: var(--pepper-red); }
-    .trend-same { color: var(--text-muted); }
+    .badge-doubles { background: rgba(244,163,0,0.2); color: var(--saffron); }
+    .badge-food    { background: rgba(39,174,96,0.2);  color: #27AE60; }
+    .lb-type { text-align: center; font-size: 0.78rem; color: var(--text-muted); }
+    .lb-source {
+      text-align: center; font-size: 0.72rem;
+    }
+    .osm-chip {
+      display: inline-block;
+      padding: 0.18rem 0.5rem;
+      border: 1px solid rgba(244,163,0,0.2);
+      border-radius: 2px;
+      color: var(--text-muted); font-size: 0.68rem;
+      font-family: 'Syne', sans-serif;
+      text-decoration: none; transition: all 0.18s;
+    }
+    .osm-chip:hover { border-color: var(--saffron); color: var(--saffron); }
 
-    /* pagination */
+
+    .no-results {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--text-muted); font-size: 0.85rem;
+    }
+
+
     .pagination { display: flex; justify-content: center; gap: 0.5rem; padding-bottom: 3rem; }
     .page-btn {
       width: 38px; height: 38px;
@@ -167,6 +245,13 @@
     }
     .page-btn.active { background: var(--saffron); color: var(--dark); border-color: var(--saffron); }
     .page-btn:hover:not(.active) { border-color: var(--saffron); }
+
+    @media(max-width: 640px) {
+      .lb-row { grid-template-columns: 50px 1fr 80px 80px; }
+      .lb-row > .lb-source { display: none; }
+      nav ul { gap: 1rem; }
+      nav { padding: 1rem 1.2rem; }
+    }
   </style>
 </head>
 <body>
@@ -184,103 +269,322 @@
   <div class="page-hero">
     <div class="page-tag">Community Rankings</div>
     <h1 class="page-title">Doubles<br><span style="color:var(--saffron)">Leaderboard</span></h1>
+    <div class="data-source">
+      <span class="dot"></span>
+      Live data · OpenStreetMap Trinidad
+    </div>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('rated',this)">Top Rated</button>
-    <button class="tab" onclick="switchTab('visited',this)">Most Visited</button>
-    <button class="tab" onclick="switchTab('trending',this)">Trending</button>
+    <button class="tab active" onclick="switchTab('doubles',this)">Doubles Spots</button>
+    <button class="tab" onclick="switchTab('all',this)">All Food Vendors</button>
+    <button class="tab" onclick="switchTab('rated',this)">Has Hours</button>
   </div>
 
-  <!-- PODIUM -->
-  <div class="podium-section">
+  <div class="loading-overlay" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-text">Fetching vendors from Trinidad…</div>
+  </div>
+
+
+  <div class="error-box" id="error-box">
+    <p id="error-msg">Could not load data from OpenStreetMap. Please check your connection and try again.</p>
+    <button class="retry-btn" onclick="loadData()">↺ Retry</button>
+  </div>
+
+
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    Showing <span id="stat-count">0</span> vendors &nbsp;·&nbsp; Last updated <span id="stat-time">—</span>
+  </div>
+
+
+  <div class="podium-section" id="podium-section" style="display:none">
     <div class="podium" id="podium"></div>
   </div>
 
-  <!-- TABLE -->
-  <div class="leaderboard-table">
+
+  <div class="leaderboard-table" id="table-section" style="display:none">
     <div class="lb-row header">
       <div>Rank</div>
       <div>Vendor</div>
-      <div style="text-align:center">Rating</div>
-      <div style="text-align:center">Reviews</div>
-      <div style="text-align:center">Visits</div>
-      <div style="text-align:center">Trend</div>
+      <div style="text-align:center">Type</div>
+      <div style="text-align:center">Area</div>
+      <div style="text-align:center">OSM</div>
     </div>
     <div id="lb-body"></div>
   </div>
 
-  <div class="pagination">
-    <button class="page-btn active">1</button>
-    <button class="page-btn">2</button>
-    <button class="page-btn">3</button>
-    <button class="page-btn">›</button>
-  </div>
+  <div class="pagination" id="pagination" style="display:none"></div>
 
   <script>
-    const VENDORS = [
-      { rank:1, name:"Chaguanas Doubles King", location:"Montrose Rd, Chaguanas", rating:4.9, reviews:524, visits:3840, trend:'+2', badge:'top', emoji:'👑' },
-      { rank:2, name:"Curepe Doubles Express",  location:"Eastern Main Rd, Curepe",   rating:4.8, reviews:401, visits:2910, trend:'+1', badge:'hot', emoji:'🔥' },
-      { rank:3, name:"Sauce & Bara Central",     location:"Charlotte St, Port of Spain", rating:4.8, reviews:312, visits:2560, trend:'—', badge:null, emoji:'⭐' },
-      { rank:4, name:"Maraval Morning Stop",     location:"Maraval Rd, Port of Spain",   rating:4.7, reviews:220, visits:1840, trend:'+3', badge:'new', emoji:'🌟' },
-      { rank:5, name:"Tunapuna Doubles Spot",    location:"Main Rd, Tunapuna",          rating:4.7, reviews:275, visits:1720, trend:'-1', badge:null, emoji:'🌶️' },
-      { rank:6, name:"San Fernando Doubles Man", location:"Coffee St, San Fernando",    rating:4.6, reviews:310, visits:1580, trend:'+1', badge:null, emoji:'🫓' },
-      { rank:7, name:"Fyzabad Road Doubles",     location:"Southern Main Rd, Fyzabad",  rating:4.5, reviews:187, visits:1120, trend:'—', badge:null, emoji:'🥘' },
-      { rank:8, name:"Arima Junction Spot",      location:"Arima Old Rd, Arima",        rating:4.3, reviews:98,  visits:780,  trend:'-2', badge:null, emoji:'🌿' },
+
+    const OVERPASS_MIRRORS = [
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
     ];
 
-    function renderPodium(data) {
-      const top3 = [data[1], data[0], data[2]]; // silver, gold, bronze order for visual
-      const classes = ['rank-2','rank-1','rank-3'];
-      const medals = ['🥈','🥇','🥉'];
-      const html = top3.map((v,i) => `
-        <div class="podium-item ${classes[i]}">
-          <div class="podium-avatar">${v.emoji}</div>
-          <div class="podium-name">${v.name.split(' ').slice(0,2).join(' ')}</div>
-          <div class="podium-score">★ ${v.rating}</div>
-          <div class="podium-block">${medals[i]}</div>
-        </div>`).join('');
-      document.getElementById('podium').innerHTML = html;
+
+    const TT_BBOX = '10.02,-61.95,10.90,-60.85';
+
+    const PAGE_SIZE = 20;
+    let allVendors = [];
+    let currentPage = 1;
+    let currentTab = 'doubles';
+
+
+    async function fetchOverpass(query) {
+      const body = 'data=' + encodeURIComponent(query);
+      for (let i = 0; i < OVERPASS_MIRRORS.length; i++) {
+        try {
+          setLoadingText(i === 0 ? 'Fetching vendors from Trinidad…' : `Trying backup server ${i}…`);
+          const ctrl = new AbortController();
+          const tid  = setTimeout(() => ctrl.abort(), 25000);
+          const resp = await fetch(OVERPASS_MIRRORS[i], {
+            method: 'POST',
+            body,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            signal: ctrl.signal,
+          });
+          clearTimeout(tid);
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return await resp.json();
+        } catch (err) {
+          console.warn('Mirror', i, 'failed:', err.message);
+          if (i === OVERPASS_MIRRORS.length - 1) throw err;
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      }
     }
 
-    function renderTable(data) {
-      const badgeMap = { hot:'<span class="lb-badge badge-hot">🔥 Hot</span>', new:'<span class="lb-badge badge-new">New</span>', top:'<span class="lb-badge badge-top">★ Top</span>' };
-      const html = data.map(v => {
-        const rankClass = v.rank===1?'gold':v.rank===2?'silver':v.rank===3?'bronze':'';
-        const trendClass = v.trend.startsWith('+')?'trend-up':v.trend==='-'||v.trend==='—'?'trend-same':'trend-down';
-        const trendIcon = v.trend.startsWith('+')?'↑':v.trend==='—'?'–':'↓';
+
+    function capitalise(s) {
+      return s.replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function parseNode(el) {
+      const t = el.tags || {};
+      const rawName = t.name || t['name:en'] || t.brand || null;
+      const nameLC  = (rawName || '').toLowerCase();
+      const cuisineLC = (t.cuisine || '').toLowerCase();
+
+      const isDoubles =
+        nameLC.includes('double') || nameLC.includes('bara') ||
+        nameLC.includes('channa') || nameLC.includes('trini') ||
+        cuisineLC.includes('trinidadian') || cuisineLC.includes('caribbean') ||
+        t['diet:trinidadian'] === 'yes';
+
+      const name = rawName
+        ? rawName
+        : isDoubles ? 'Doubles Vendor'
+        : t.amenity ? capitalise(t.amenity.replace(/_/g,' '))
+        : 'Food Vendor';
+
+
+      const street = [t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' ');
+      const city   = t['addr:city'] || t['addr:suburb'] || '';
+      const area   = city || street || guessArea(el.lat, el.lon);
+
+
+      const amenity = t.amenity || t.shop || '';
+      const typeLabel = t.cuisine
+        ? capitalise(t.cuisine.split(';')[0].replace(/_/g,' '))
+        : amenity ? capitalise(amenity.replace(/_/g,' '))
+        : 'Food Vendor';
+
+      const hasHours = !!t['opening_hours'];
+      const osmUrl   = `https://www.openstreetmap.org/node/${el.id}`;
+
+      return {
+        id:        String(el.id),
+        name,
+        area,
+        isDoubles,
+        hasHours,
+        typeLabel,
+        osmUrl,
+        lat: el.lat,
+        lng: el.lon,
+      };
+    }
+
+    function guessArea(lat, lng) {
+      if (lat > 10.6)  return 'North Trinidad';
+      if (lat < 10.2)  return 'South Trinidad';
+      if (lng < -61.3) return 'West Trinidad';
+      if (lng > -61.1) return 'East Trinidad';
+      if (lat > 10.45 && lng < -61.35) return 'Port of Spain';
+      if (lat > 10.38 && lat < 10.48 && lng > -61.40 && lng < -61.28) return 'Central Trinidad';
+      return 'Trinidad';
+    }
+
+    async function loadData() {
+      showLoading(true);
+      hideError();
+      hideSections();
+
+      const query = `[out:json][timeout:30];
+(
+  node["amenity"~"fast_food|restaurant|snack_bar|food_court|street_vendor|cafe"](${TT_BBOX});
+  node["shop"~"deli|convenience|bakery"](${TT_BBOX});
+);
+out body;`;
+
+      try {
+        const data = await fetchOverpass(query);
+        const elements = data.elements || [];
+
+        setLoadingText(`Processing ${elements.length} results…`);
+        await new Promise(r => setTimeout(r, 200)); 
+
+        allVendors = elements.map(parseNode);
+
+        document.getElementById('stat-time').textContent = new Date().toLocaleTimeString('en-TT', { hour:'2-digit', minute:'2-digit' });
+
+        showLoading(false);
+        renderTab(currentTab);
+      } catch (err) {
+        showLoading(false);
+        showError('Could not load data from OpenStreetMap. ' + err.message);
+      }
+    }
+
+
+    function getFiltered(tab) {
+      let list = [...allVendors];
+      if (tab === 'doubles') list = list.filter(v => v.isDoubles);
+      else if (tab === 'rated') list = list.filter(v => v.hasHours);
+
+      list.sort((a, b) => {
+        if (a.isDoubles !== b.isDoubles) return a.isDoubles ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+      return list;
+    }
+
+    function getEmoji(v) {
+      if (v.isDoubles) return '🫓';
+      const t = v.typeLabel.toLowerCase();
+      if (t.includes('cafe')) return '☕';
+      if (t.includes('bak')) return '🥐';
+      if (t.includes('caribbean') || t.includes('trini')) return '🌶️';
+      return '🍽️';
+    }
+
+    function renderPodium(top3) {
+      if (top3.length < 3) {
+        document.getElementById('podium-section').style.display = 'none';
+        return;
+      }
+      const order   = [top3[1], top3[0], top3[2]];
+      const classes = ['rank-2','rank-1','rank-3'];
+      const medals  = ['🥈','🥇','🥉'];
+      document.getElementById('podium').innerHTML = order.map((v, i) => `
+        <div class="podium-item ${classes[i]}">
+          <div class="podium-avatar">${getEmoji(v)}</div>
+          <div class="podium-name">${v.name.length > 22 ? v.name.slice(0,20)+'…' : v.name}</div>
+          <div class="podium-score">${v.area}</div>
+          <div class="podium-block">${medals[i]}</div>
+        </div>`).join('');
+      document.getElementById('podium-section').style.display = 'block';
+    }
+
+    function renderTable(list, page) {
+      const start = (page - 1) * PAGE_SIZE;
+      const slice = list.slice(start, start + PAGE_SIZE);
+
+      if (slice.length === 0) {
+        document.getElementById('lb-body').innerHTML = `
+          <div class="no-results">No vendors found for this filter.</div>`;
+        return;
+      }
+
+      document.getElementById('lb-body').innerHTML = slice.map((v, idx) => {
+        const rank      = start + idx + 1;
+        const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+        const badge     = v.isDoubles
+          ? '<span class="lb-badge badge-doubles">Doubles</span>'
+          : '<span class="lb-badge badge-food">Food</span>';
         return `
-        <div class="lb-row" onclick="goToMap()">
-          <div class="lb-rank ${rankClass}">${v.rank}</div>
+        <div class="lb-row" onclick="window.open('${v.osmUrl}','_blank')">
+          <div class="lb-rank ${rankClass}">${rank}</div>
           <div class="lb-info">
-            <div class="lb-name">${v.emoji} ${v.name}${v.badge?badgeMap[v.badge]:''}</div>
-            <div class="lb-location">${v.location}</div>
+            <div class="lb-name">${getEmoji(v)} ${v.name}${badge}</div>
+            <div class="lb-location">${v.area}</div>
           </div>
-          <div class="lb-num lb-rating">★ ${v.rating}</div>
-          <div class="lb-num" style="color:var(--text-muted)">${v.reviews}</div>
-          <div class="lb-num" style="color:var(--text-muted)">${v.visits.toLocaleString()}</div>
-          <div class="lb-trend ${trendClass}">${trendIcon} ${Math.abs(v.trend)}</div>
+          <div class="lb-type">${v.typeLabel}</div>
+          <div class="lb-num" style="color:var(--text-muted);font-size:0.78rem">${v.hasHours ? '🕐 Hours listed' : '—'}</div>
+          <div class="lb-source">
+            <a class="osm-chip" href="${v.osmUrl}" target="_blank" onclick="event.stopPropagation()">OSM ↗</a>
+          </div>
         </div>`;
       }).join('');
-      document.getElementById('lb-body').innerHTML = html;
+    }
+
+    function renderPagination(total, page) {
+      const pages = Math.ceil(total / PAGE_SIZE);
+      if (pages <= 1) { document.getElementById('pagination').style.display = 'none'; return; }
+      document.getElementById('pagination').style.display = 'flex';
+      const maxShow = 5;
+      let html = '';
+      if (page > 1) html += `<button class="page-btn" onclick="goPage(${page-1})">‹</button>`;
+      for (let i = 1; i <= Math.min(pages, maxShow); i++) {
+        html += `<button class="page-btn${i===page?' active':''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      if (pages > maxShow) html += `<button class="page-btn" onclick="goPage(${page<pages?page+1:pages})">›</button>`;
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    function goPage(p) {
+      currentPage = p;
+      const list = getFiltered(currentTab);
+      renderTable(list, p);
+      renderPagination(list.length, p);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function switchTab(tab, btn) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
-      let sorted = [...VENDORS];
-      if (tab === 'visited') sorted.sort((a,b) => b.visits - a.visits);
-      else if (tab === 'trending') sorted.sort((a,b) => parseInt(b.trend) - parseInt(a.trend));
-      // re-rank
-      sorted = sorted.map((v,i) => ({...v, rank: i+1}));
-      renderPodium(sorted);
-      renderTable(sorted);
+      currentTab = tab;
+      currentPage = 1;
+      renderTab(tab);
     }
 
-    function goToMap() { window.location.href = 'map.html'; }
+    function renderTab(tab) {
+      const list = getFiltered(tab);
+      document.getElementById('stat-count').textContent = list.length;
+      document.getElementById('stats-bar').style.display = 'flex';
+      document.getElementById('table-section').style.display = 'block';
 
-    renderPodium(VENDORS);
-    renderTable(VENDORS);
+      renderPodium(list.slice(0, 3));
+      renderTable(list, currentPage);
+      renderPagination(list.length, currentPage);
+    }
+
+    function showLoading(show) {
+      document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+    function setLoadingText(msg) {
+      document.getElementById('loading-text').textContent = msg;
+    }
+    function showError(msg) {
+      const box = document.getElementById('error-box');
+      document.getElementById('error-msg').textContent = msg;
+      box.style.display = 'block';
+    }
+    function hideError() {
+      document.getElementById('error-box').style.display = 'none';
+    }
+    function hideSections() {
+      document.getElementById('podium-section').style.display = 'none';
+      document.getElementById('table-section').style.display = 'none';
+      document.getElementById('stats-bar').style.display = 'none';
+      document.getElementById('pagination').style.display = 'none';
+    }
+
+
+    loadData();
   </script>
 </body>
 </html>
