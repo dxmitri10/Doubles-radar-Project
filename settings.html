@@ -4,7 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DoubleFinder – Settings</title>
-  <link rel="manifest" href="manifest.json"/>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F4A300" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DoubleFinder" />
+  <link rel="apple-touch-icon" href="https://placehold.co/192x192/F4A300/0E1A14?text=DF" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -41,7 +47,7 @@
 
     .field-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 
-    /* TOGGLE */
+   
     .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:0.9rem 0; border-bottom:1px solid var(--border); }
     .toggle-row:last-child { border-bottom:none; }
     .toggle-info { flex:1; }
@@ -54,17 +60,16 @@
     .toggle input:checked + .slider { background:rgba(244,163,0,0.3); }
     .toggle input:checked + .slider::before { transform:translateX(20px); background:var(--saffron); }
 
-    /* PEPPER PREFERENCE */
+   
     .pepper-selector { display:flex; gap:0.5rem; flex-wrap:wrap; }
     .pepper-btn { padding:0.4rem 1rem; border-radius:20px; border:1px solid rgba(244,163,0,0.2); background:transparent; color:var(--text-muted); font-family:'Syne',sans-serif; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; transition:all 0.2s; }
     .pepper-btn.active { background:var(--saffron); color:var(--dark); border-color:var(--saffron); }
     .pepper-btn:hover:not(.active) { border-color:var(--saffron); color:var(--cream); }
 
-    /* DANGER ZONE */
     .danger-section { background:rgba(192,57,43,0.05); border:1px solid rgba(192,57,43,0.2); }
     .danger-section .section-title { color:#C0392B; }
 
-    /* BUTTONS */
+   
     .btn-save { background:var(--saffron); color:var(--dark); font-family:'Syne',sans-serif; font-weight:800; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; padding:0.8rem 2rem; border-radius:3px; border:none; cursor:pointer; transition:all 0.2s; }
     .btn-save:hover { background:var(--turmeric); transform:translateY(-1px); }
     .btn-outline { background:transparent; color:var(--cream); font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; padding:0.8rem 2rem; border-radius:3px; border:1px solid rgba(255,248,236,0.2); cursor:pointer; transition:all 0.2s; }
@@ -106,7 +111,7 @@
     </nav>
 
     <div class="settings-main">
-      <!-- PROFILE -->
+    
       <div class="settings-section" id="profile">
         <div class="section-title">Profile Information</div>
         <div class="section-desc">Update your public profile details</div>
@@ -136,7 +141,7 @@
         </div>
       </div>
 
-      <!-- PREFERENCES -->
+      
       <div class="settings-section" id="preferences">
         <div class="section-title">Doubles Preferences</div>
         <div class="section-desc">Customize how DoubleFinder shows you vendors</div>
@@ -172,7 +177,7 @@
         <div class="btn-row"><button class="btn-save" onclick="saveSection('Preferences saved!')">Save Preferences</button></div>
       </div>
 
-      <!-- NOTIFICATIONS -->
+     
       <div class="settings-section" id="notifications">
         <div class="section-title">Notifications</div>
         <div class="section-desc">Control what updates you receive</div>
@@ -199,7 +204,7 @@
         <div class="btn-row"><button class="btn-save" onclick="saveSection('Notification settings saved!')">Save</button></div>
       </div>
 
-      <!-- PRIVACY -->
+     
       <div class="settings-section" id="privacy">
         <div class="section-title">Privacy & Security</div>
         <div class="section-desc">Manage your data and account security</div>
@@ -226,7 +231,7 @@
         <div class="btn-row"><button class="btn-save" onclick="saveSection('Privacy settings saved!')">Save Changes</button></div>
       </div>
 
-      <!-- DANGER ZONE -->
+      
       <div class="settings-section danger-section" id="danger">
         <div class="section-title">Danger Zone</div>
         <div class="section-desc">Permanent actions — proceed with caution</div>
@@ -293,6 +298,13 @@
     }
 
     loadProfile();
+
+      if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.error('SW error:', err));
+  }
   </script>
 </body>
 </html>
+
