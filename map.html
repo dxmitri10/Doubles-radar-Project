@@ -375,7 +375,7 @@
     <div class="vendor-list" id="vendor-list">
       <div class="loading-state">
         <div class="spinner"></div>
-        Fetching vendors from OpenStreetMap…
+        Fetching doubles vendors from OpenStreetMap…
       </div>
     </div>
   </div>
@@ -485,10 +485,13 @@ async function fetchFromOverpass(bbox) {
     s = midLat - r; w = midLng - r; n = midLat + r; e = midLng + r;
   }
 
+  // Overpass query: only fetch nodes that are explicitly tagged or named as doubles/bara/channa vendors.
+  // Using name~ regex and cuisine tags so only genuine doubles stalls are returned — no generic restaurants.
   var query = '[out:json][timeout:20];\n'
     + '(\n'
-    + '  node["amenity"~"fast_food|restaurant|snack_bar|food_court|street_vendor|cafe"](' + s + ',' + w + ',' + n + ',' + e + ');\n'
-    + '  node["shop"~"deli|convenience|bakery"](' + s + ',' + w + ',' + n + ',' + e + ');\n'
+    + '  node["name"~"double|bara|channa|pholourie",i](' + s + ',' + w + ',' + n + ',' + e + ');\n'
+    + '  node["cuisine"~"trinidadian|doubles|caribbean",i](' + s + ',' + w + ',' + n + ',' + e + ');\n'
+    + '  node["diet:trinidadian"="yes"](' + s + ',' + w + ',' + n + ',' + e + ');\n'
     + ');\nout body;';
 
   var body = 'data=' + encodeURIComponent(query);
@@ -529,10 +532,14 @@ function osmToVendor(el) {
   const isDoublesRelated =
     nameLC.includes('double') || nameLC.includes('bara') ||
     nameLC.includes('channa') || nameLC.includes('trini') ||
-    cuisineLC.includes('trinidadian') || cuisineLC.includes('caribbean') ||
+    cuisineLC.includes('trinidadian') || cuisineLC.includes('doubles') || cuisineLC.includes('caribbean') ||
     t['diet:trinidadian'] === 'yes';
 
-  const name     = rawName || (isDoublesRelated ? 'Doubles Vendor' : t.amenity ? capitalise(t.amenity.replace('_',' ')) : 'Food Vendor');
+  // Skip this node entirely if it does not match doubles criteria —
+  // the tight query above should prevent this, but acts as a safety net.
+  if (!isDoublesRelated) return null;
+
+  const name     = rawName || 'Doubles Vendor';
   const street   = [t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' ');
   const city     = t['addr:city'] || t['addr:suburb'] || '';
   const location = street ? (city ? `${street}, ${city}` : street) : (city || t['addr:postcode'] || 'Trinidad');
@@ -549,14 +556,10 @@ function osmToVendor(el) {
   const rating = stars ? Math.min(5, stars) : null;
 
 
-  const sells = [];
-  if (isDoublesRelated || nameLC.includes('double')) sells.push('Doubles');
-  if (nameLC.includes('bara'))    sells.push('Bara');
-  if (nameLC.includes('channa'))  sells.push('Channa');
-  if (nameLC.includes('pholourie') || cuisineLC.includes('pholourie')) sells.push('Pholourie');
-  if (cuisineLC.includes('trinidadian') || cuisineLC.includes('caribbean')) sells.push('Caribbean');
-  if (t.amenity === 'fast_food') sells.push('Fast Food');
-  if (sells.length === 0) sells.push(capitalise((t.amenity || t.shop || 'food').replace(/_/g,' ')));
+  const sells = ['Doubles'];
+  if (nameLC.includes('bara'))                                          sells.push('Bara');
+  if (nameLC.includes('channa'))                                        sells.push('Channa');
+  if (nameLC.includes('pholourie') || cuisineLC.includes('pholourie'))  sells.push('Pholourie');
 
 
   const phone   = t.phone || t['contact:phone'] || null;
@@ -617,7 +620,7 @@ async function loadVendors(bbox) {
       bounds.getNorthEast().lat(), bounds.getNorthEast().lng()
     ];
     const data = await fetchFromOverpass(b);
-    const parsed = data.elements.map(osmToVendor);
+    const parsed = data.elements.map(osmToVendor).filter(v => v !== null);
 
 
     parsed.forEach(v => {
@@ -646,7 +649,7 @@ async function loadVendors(bbox) {
 function setListLoading(on) {
   if (on) {
     document.getElementById('vendor-list').innerHTML =
-      '<div class="loading-state"><div class="spinner"></div><span class="loading-label">Fetching from OpenStreetMap…</span></div>';
+      '<div class="loading-state"><div class="spinner"></div><span class="loading-label">Fetching doubles vendors from OpenStreetMap…</span></div>';
     document.getElementById('sidebar-count').textContent = 'Loading…';
   }
 }
@@ -669,7 +672,7 @@ async function refreshData() {
 
 function markerSvgUrl(v) {
   const color = v.openStatus === 'open' ? '#27AE60' : v.openStatus === 'closed' ? '#C0392B' : '#7A8C82';
-  const emoji = v.isDoublesRelated ? '🫓' : '🍽️';
+  const emoji = '🫓'; // All results are doubles vendors
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
     <path d="M18 0C8 0 0 8 0 18c0 13.5 18 26 18 26S36 31.5 36 18C36 8 28 0 18 0z" fill="${color}" opacity="0.92"/>
     <circle cx="18" cy="18" r="10" fill="rgba(255,255,255,0.15)"/>
@@ -1085,4 +1088,3 @@ window.addEventListener('load', initMap);
 </script>
 </body>
 </html>
-
