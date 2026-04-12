@@ -14,297 +14,905 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    :root { --saffron:#F4A300; --turmeric:#E8820C; --cream:#FFF8EC; --dark:#0E1A14; --card-bg:#132018; --text-muted:#7A8C82; --border:rgba(244,163,0,0.1); --error:#C0392B; --success:#27AE60; }
+    :root {
+      --saffron: #F4A300;
+      --turmeric: #E8820C;
+      --cream: #FFF8EC;
+      --dark: #0E1A14;
+      --dark2: #0b1710;
+      --card-bg: #132018;
+      --card2: #172a1e;
+      --text-muted: #7A8C82;
+      --border: rgba(244,163,0,0.1);
+      --border-strong: rgba(244,163,0,0.2);
+      --error: #C0392B;
+      --success: #27AE60;
+      --nav-h: 64px;
+    }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:var(--dark); color:var(--cream); font-family:'DM Sans',sans-serif; min-height:100vh; }
-    nav { display:flex; align-items:center; justify-content:space-between; padding:1rem 2.5rem; background:rgba(14,26,20,0.95); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+
+    body {
+      background: var(--dark); color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(244,163,0,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244,163,0,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none; z-index: 0;
+    }
+
+    
+    nav {
+      height: var(--nav-h); display: flex; align-items: center;
+      justify-content: space-between; padding: 0 2rem;
+      background: rgba(11,23,16,0.97);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 200;
+      backdrop-filter: blur(12px);
+    }
     .logo { font-family:'Bebas Neue',sans-serif; font-size:1.7rem; letter-spacing:2px; color:var(--saffron); text-decoration:none; }
     .logo span { color:var(--cream); }
-    nav ul { list-style:none; display:flex; gap:1.8rem; align-items:center; }
-    nav ul a { color:var(--cream); text-decoration:none; font-family:'Syne',sans-serif; font-size:0.82rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; transition:color 0.2s; }
-    nav ul a:hover, nav ul a.active { color:var(--saffron); }
-    .btn-nav { background:var(--saffron); color:var(--dark) !important; padding:0.45rem 1.2rem; border-radius:2px; }
+    .nav-links { list-style:none; display:flex; gap:0.3rem; align-items:center; }
+    .nav-links a {
+      color:var(--text-muted); text-decoration:none;
+      font-family:'Syne',sans-serif; font-size:0.78rem; font-weight:700;
+      letter-spacing:1px; text-transform:uppercase;
+      padding: 0.45rem 0.9rem; border-radius: 3px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color:var(--cream); background: rgba(255,255,255,0.05); }
+    .nav-links a.active { color:var(--saffron); }
+    .nav-links .btn-logout {
+      background: rgba(192,57,43,0.12); color: var(--error) !important;
+      border: 1px solid rgba(192,57,43,0.25); cursor:pointer;
+      font-family:'Syne',sans-serif; font-size:0.78rem; font-weight:700;
+      letter-spacing:1px; text-transform:uppercase;
+      padding:0.45rem 1rem; border-radius:3px;
+      transition: background 0.2s;
+    }
+    .nav-links .btn-logout:hover { background: rgba(192,57,43,0.22); }
 
-    .page-header { padding:3rem 2.5rem 2rem; max-width:1000px; margin:0 auto; }
-    .page-tag { font-family:'Syne',sans-serif; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; color:var(--saffron); margin-bottom:0.6rem; }
-    .page-title { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:2px; }
+    
+    .page-wrap { position:relative; z-index:1; max-width:1060px; margin:0 auto; padding:0 2rem 5rem; }
 
-    .settings-layout { max-width:1000px; margin:0 auto; padding:0 2.5rem 4rem; display:grid; grid-template-columns:220px 1fr; gap:2rem; }
-    .settings-nav { position:sticky; top:80px; align-self:start; }
-    .settings-nav a { display:block; padding:0.6rem 1rem; font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:var(--text-muted); text-decoration:none; border-left:2px solid transparent; transition:all 0.2s; }
-    .settings-nav a:hover, .settings-nav a.active { color:var(--saffron); border-left-color:var(--saffron); background:rgba(244,163,0,0.04); }
+    .page-header {
+      padding: 3rem 0 2.5rem;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+    .page-header-left {}
+    .page-tag { font-family:'Syne',sans-serif; font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; color:var(--saffron); margin-bottom:0.5rem; }
+    .page-title { font-family:'Bebas Neue',sans-serif; font-size:3.2rem; letter-spacing:2px; line-height:1; }
+    .page-subtitle { color:var(--text-muted); font-size:0.88rem; margin-top:0.5rem; }
+    .user-pill {
+      display:flex; align-items:center; gap:0.8rem;
+      background:var(--card-bg); border:1px solid var(--border);
+      border-radius:40px; padding:0.5rem 1rem 0.5rem 0.5rem;
+    }
+    .user-avatar {
+      width:36px; height:36px; border-radius:50%;
+      background:linear-gradient(135deg,var(--saffron),var(--turmeric));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; font-weight:700; color:var(--dark); flex-shrink:0;
+    }
+    .user-pill-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.82rem; }
+    .user-pill-email { font-size:0.74rem; color:var(--text-muted); }
 
-    .settings-section { background:var(--card-bg); border:1px solid var(--border); border-radius:4px; padding:2rem; margin-bottom:1.5rem; }
-    .section-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; margin-bottom:0.3rem; }
-    .section-desc { color:var(--text-muted); font-size:0.82rem; margin-bottom:1.8rem; padding-bottom:1.2rem; border-bottom:1px solid var(--border); }
+    
+    .settings-layout { display:grid; grid-template-columns:200px 1fr; gap:2.5rem; }
 
-    .field-group { margin-bottom:1.4rem; }
-    label.field-label { display:block; font-family:'Syne',sans-serif; font-size:0.73rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.45rem; }
-    input[type="text"], input[type="email"], input[type="password"], select, textarea { width:100%; background:rgba(255,248,236,0.05); border:1px solid rgba(244,163,0,0.18); border-radius:3px; color:var(--cream); padding:0.75rem 1rem; font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; transition:border-color 0.2s; }
-    input:focus, select:focus, textarea:focus { border-color:var(--saffron); }
+    
+    .settings-nav {
+      position:sticky; top:calc(var(--nav-h) + 1.5rem);
+      align-self: start;
+    }
+    .snav-label {
+      font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
+      letter-spacing:2px; text-transform:uppercase; color:var(--text-muted);
+      padding: 0 0.75rem; margin-bottom:0.5rem;
+    }
+    .snav-link {
+      display:flex; align-items:center; gap:0.6rem;
+      padding:0.6rem 0.75rem; border-radius:3px;
+      font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700;
+      letter-spacing:0.3px; text-transform:uppercase;
+      color:var(--text-muted); text-decoration:none;
+      border-left:2px solid transparent;
+      transition:all 0.18s; margin-bottom:2px;
+    }
+    .snav-link:hover { color:var(--cream); background:rgba(255,255,255,0.04); border-left-color:rgba(244,163,0,0.3); }
+    .snav-link.active { color:var(--saffron); background:rgba(244,163,0,0.06); border-left-color:var(--saffron); }
+    .snav-icon { font-size:0.95rem; }
+    .snav-divider { border:none; border-top:1px solid var(--border); margin:0.8rem 0.75rem; }
+
+    
+    .settings-section {
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      border-radius:4px;
+      padding:2rem;
+      margin-bottom:1.5rem;
+      scroll-margin-top: calc(var(--nav-h) + 2rem);
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+    .section-head { margin-bottom:1.6rem; padding-bottom:1.2rem; border-bottom:1px solid var(--border); }
+    .section-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; margin-bottom:0.25rem; display:flex; align-items:center; gap:0.5rem; }
+    .section-title .icon { font-size:1.1rem; }
+    .section-desc { color:var(--text-muted); font-size:0.82rem; line-height:1.6; }
+
+   
+    .field-group { margin-bottom:1.2rem; }
+    .field-group:last-of-type { margin-bottom:0; }
+    label.field-label {
+      display:block; font-family:'Syne',sans-serif;
+      font-size:0.7rem; font-weight:700; letter-spacing:1.2px;
+      text-transform:uppercase; color:var(--text-muted); margin-bottom:0.45rem;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select, textarea {
+      width:100%;
+      background:rgba(255,248,236,0.04);
+      border:1px solid rgba(244,163,0,0.15);
+      border-radius:3px; color:var(--cream);
+      padding:0.8rem 1rem;
+      font-family:'DM Sans',sans-serif; font-size:0.9rem;
+      outline:none; transition:border-color 0.2s, background 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color:var(--saffron);
+      background:rgba(244,163,0,0.03);
+    }
+    input.error { border-color: var(--error); }
     select option { background:var(--card-bg); }
-    textarea { min-height:80px; resize:vertical; }
+    textarea { min-height:80px; resize:vertical; line-height:1.6; }
+    .field-hint { font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem; }
+    .field-hint.err { color:var(--error); display:none; }
+    .field-hint.err.show { display:block; }
 
     .field-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 
-   
-    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:0.9rem 0; border-bottom:1px solid var(--border); }
-    .toggle-row:last-child { border-bottom:none; }
-    .toggle-info { flex:1; }
+    
+    .toggle-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1rem 0; border-bottom:1px solid var(--border);
+    }
+    .toggle-row:last-of-type { border-bottom:none; padding-bottom:0; }
+    .toggle-info { flex:1; padding-right:1rem; }
     .toggle-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.88rem; margin-bottom:0.2rem; }
-    .toggle-desc { color:var(--text-muted); font-size:0.78rem; }
-    .toggle { position:relative; width:44px; height:24px; flex-shrink:0; margin-left:1.5rem; }
+    .toggle-desc { color:var(--text-muted); font-size:0.78rem; line-height:1.5; }
+    .toggle { position:relative; width:46px; height:26px; flex-shrink:0; }
     .toggle input { opacity:0; width:0; height:0; }
-    .slider { position:absolute; inset:0; background:rgba(255,255,255,0.1); border-radius:24px; cursor:pointer; transition:background 0.3s; }
-    .slider::before { content:''; position:absolute; width:18px; height:18px; left:3px; bottom:3px; background:var(--text-muted); border-radius:50%; transition:transform 0.3s, background 0.3s; }
-    .toggle input:checked + .slider { background:rgba(244,163,0,0.3); }
+    .slider {
+      position:absolute; inset:0; border-radius:26px; cursor:pointer;
+      background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.06);
+      transition:background 0.3s, border-color 0.3s;
+    }
+    .slider::before {
+      content:''; position:absolute;
+      width:18px; height:18px; left:3px; bottom:3px;
+      background:var(--text-muted); border-radius:50%;
+      transition:transform 0.3s, background 0.3s;
+    }
+    .toggle input:checked + .slider { background:rgba(244,163,0,0.25); border-color:rgba(244,163,0,0.4); }
     .toggle input:checked + .slider::before { transform:translateX(20px); background:var(--saffron); }
 
-   
-    .pepper-selector { display:flex; gap:0.5rem; flex-wrap:wrap; }
-    .pepper-btn { padding:0.4rem 1rem; border-radius:20px; border:1px solid rgba(244,163,0,0.2); background:transparent; color:var(--text-muted); font-family:'Syne',sans-serif; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; transition:all 0.2s; }
+    
+    .pepper-selector { display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.3rem; }
+    .pepper-btn {
+      padding:0.38rem 0.9rem; border-radius:20px;
+      border:1px solid rgba(244,163,0,0.18); background:transparent;
+      color:var(--text-muted); font-family:'Syne',sans-serif;
+      font-size:0.72rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.5px; cursor:pointer; transition:all 0.18s;
+    }
+    .pepper-btn:hover:not(.active) { border-color:rgba(244,163,0,0.4); color:var(--cream); }
     .pepper-btn.active { background:var(--saffron); color:var(--dark); border-color:var(--saffron); }
-    .pepper-btn:hover:not(.active) { border-color:var(--saffron); color:var(--cream); }
 
-    .danger-section { background:rgba(192,57,43,0.05); border:1px solid rgba(192,57,43,0.2); }
-    .danger-section .section-title { color:#C0392B; }
+    
+    .avatar-row { display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+    .avatar-lg {
+      width:72px; height:72px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg,var(--saffron),var(--turmeric));
+      display:flex; align-items:center; justify-content:center;
+      font-size:2rem; border:2px solid rgba(244,163,0,0.3);
+    }
+    .avatar-options { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .avatar-opt {
+      width:40px; height:40px; border-radius:50%; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.2rem; border:2px solid transparent;
+      transition:border-color 0.18s, transform 0.18s;
+      background:rgba(255,248,236,0.05);
+    }
+    .avatar-opt:hover { transform:scale(1.1); }
+    .avatar-opt.selected { border-color:var(--saffron); }
 
    
-    .btn-save { background:var(--saffron); color:var(--dark); font-family:'Syne',sans-serif; font-weight:800; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; padding:0.8rem 2rem; border-radius:3px; border:none; cursor:pointer; transition:all 0.2s; }
-    .btn-save:hover { background:var(--turmeric); transform:translateY(-1px); }
-    .btn-outline { background:transparent; color:var(--cream); font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; padding:0.8rem 2rem; border-radius:3px; border:1px solid rgba(255,248,236,0.2); cursor:pointer; transition:all 0.2s; }
-    .btn-outline:hover { border-color:var(--cream); }
-    .btn-danger { background:rgba(192,57,43,0.15); color:#C0392B; font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; padding:0.8rem 2rem; border-radius:3px; border:1px solid rgba(192,57,43,0.3); cursor:pointer; transition:all 0.2s; }
-    .btn-danger:hover { background:rgba(192,57,43,0.25); }
-    .btn-row { display:flex; gap:0.8rem; margin-top:1.5rem; flex-wrap:wrap; }
+    .btn-row { display:flex; gap:0.75rem; margin-top:1.6rem; flex-wrap:wrap; }
+    .btn-save {
+      background:var(--saffron); color:var(--dark);
+      font-family:'Syne',sans-serif; font-weight:800;
+      font-size:0.82rem; letter-spacing:1.2px; text-transform:uppercase;
+      padding:0.8rem 1.8rem; border-radius:3px; border:none;
+      cursor:pointer; transition:all 0.2s;
+      box-shadow: 0 4px 16px rgba(244,163,0,0.2);
+    }
+    .btn-save:hover { background:var(--turmeric); transform:translateY(-1px); box-shadow:0 6px 20px rgba(244,163,0,0.3); }
+    .btn-save:active { transform:translateY(0); }
+    .btn-outline {
+      background:transparent; color:var(--cream);
+      font-family:'Syne',sans-serif; font-weight:700;
+      font-size:0.82rem; letter-spacing:1px; text-transform:uppercase;
+      padding:0.8rem 1.8rem; border-radius:3px;
+      border:1px solid rgba(255,248,236,0.15); cursor:pointer; transition:all 0.2s;
+    }
+    .btn-outline:hover { border-color:rgba(255,248,236,0.35); }
+    .btn-danger-sm {
+      background:rgba(192,57,43,0.1); color:var(--error);
+      font-family:'Syne',sans-serif; font-weight:700;
+      font-size:0.8rem; letter-spacing:0.8px; text-transform:uppercase;
+      padding:0.65rem 1.2rem; border-radius:3px;
+      border:1px solid rgba(192,57,43,0.25); cursor:pointer; transition:all 0.2s;
+      flex-shrink:0;
+    }
+    .btn-danger-sm:hover { background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.45); }
 
-    .toast { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--card-bg); border:1px solid rgba(244,163,0,0.3); color:var(--cream); padding:0.8rem 1.5rem; border-radius:3px; font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:600; transition:transform 0.3s; z-index:300; }
+   
+    .danger-section {
+      background:rgba(192,57,43,0.04);
+      border-color:rgba(192,57,43,0.18);
+    }
+    .danger-section .section-title { color:var(--error); }
+
+   
+    .strength-wrap { margin-top:0.5rem; }
+    .strength-bar { height:3px; border-radius:2px; background:rgba(255,255,255,0.07); overflow:hidden; margin-bottom:0.25rem; }
+    .strength-fill { height:100%; border-radius:2px; width:0; transition:width 0.3s, background 0.3s; }
+    .strength-label { font-size:0.72rem; color:var(--text-muted); font-family:'Syne',sans-serif; }
+
+   
+    .toast {
+      position:fixed; bottom:1.8rem; left:50%;
+      transform:translateX(-50%) translateY(80px);
+      background:var(--card2); border:1px solid rgba(244,163,0,0.3);
+      color:var(--cream); padding:0.75rem 1.5rem;
+      border-radius:3px; font-family:'Syne',sans-serif;
+      font-size:0.85rem; font-weight:700;
+      transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index:500; white-space:nowrap;
+      box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    }
     .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast.success { border-color:rgba(39,174,96,0.4); }
+    .toast.error { border-color:rgba(192,57,43,0.4); }
 
-    @media(max-width:768px) { .settings-layout { grid-template-columns:1fr; } .settings-nav { display:none; } .field-row { grid-template-columns:1fr; } }
+   
+    .inner-divider { border:none; border-top:1px solid var(--border); margin:1.5rem 0; }
+
+    @media(max-width:768px) {
+      .settings-layout { grid-template-columns:1fr; }
+      .settings-nav { display:none; }
+      .field-row { grid-template-columns:1fr; }
+      .page-header { flex-direction:column; align-items:flex-start; gap:1rem; }
+    }
   </style>
 </head>
 <body>
 
+
   <nav>
     <a href="index.html" class="logo">Double<span>Finder</span></a>
-    <ul>
-      <li><a href="map.html">Map</a></li>
+    <ul class="nav-links">
+      <li><a href="map.html">Find Doubles</a></li>
+      <li><a href="leaderboard.html">Leaderboard</a></li>
       <li><a href="profile.html">Profile</a></li>
       <li><a href="settings.html" class="active">Settings</a></li>
-      <li><button onclick="logout()" style="background:rgba(192,57,43,0.15);color:#C0392B;border:1px solid rgba(192,57,43,0.3);padding:0.45rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Log Out</button></li>
+      <li><button class="btn-logout" onclick="logout()">Log Out</button></li>
     </ul>
   </nav>
 
-  <div class="page-header">
-    <div class="page-tag">Account</div>
-    <h1 class="page-title">Settings</h1>
-  </div>
+  <div class="page-wrap">
 
-  <div class="settings-layout">
-    <nav class="settings-nav">
-      <a href="#profile" class="active">👤 Profile</a>
-      <a href="#preferences">🌶️ Preferences</a>
-      <a href="#notifications">🔔 Notifications</a>
-      <a href="#privacy">🔒 Privacy</a>
-      <a href="#danger">⚠️ Danger Zone</a>
-    </nav>
+  
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="page-tag">Account</div>
+        <h1 class="page-title">Settings</h1>
+        <p class="page-subtitle">Manage your profile, preferences and privacy</p>
+      </div>
+      <div class="user-pill" id="user-pill">
+        <div class="user-avatar" id="header-avatar">?</div>
+        <div>
+          <div class="user-pill-name" id="header-name">Loading…</div>
+          <div class="user-pill-email" id="header-email"></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="settings-main">
+    <div class="settings-layout">
+
     
-      <div class="settings-section" id="profile">
-        <div class="section-title">Profile Information</div>
-        <div class="section-desc">Update your public profile details</div>
-        <div class="field-row">
-          <div class="field-group"><label class="field-label">First Name</label><input type="text" id="fname" placeholder="John"/></div>
-          <div class="field-group"><label class="field-label">Last Name</label><input type="text" id="lname" placeholder="Doe"/></div>
-        </div>
-        <div class="field-group"><label class="field-label">Username</label><input type="text" id="s-username" placeholder="doublesking99"/></div>
-        <div class="field-group"><label class="field-label">Email</label><input type="email" id="s-email" placeholder="you@mail.com"/></div>
-        <div class="field-group"><label class="field-label">Bio</label><textarea id="bio" placeholder="Tell the community about yourself…"></textarea></div>
-        <div class="field-group">
-          <label class="field-label">Location</label>
-          <select id="location">
-            <option value="">Select area…</option>
-            <option value="pos">Port of Spain</option>
-            <option value="chaguanas" selected>Chaguanas</option>
-            <option value="sanfernando">San Fernando</option>
-            <option value="arima">Arima</option>
-            <option value="tunapuna">Tunapuna</option>
-            <option value="curepe">Curepe</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="btn-row">
-          <button class="btn-save" onclick="saveSection('Profile updated!')">Save Changes</button>
-          <button class="btn-outline" onclick="loadProfile()">Reset</button>
-        </div>
-      </div>
+      <nav class="settings-nav" aria-label="Settings sections">
+        <div class="snav-label">Sections</div>
+        <a href="#profile"       class="snav-link active"><span class="snav-icon">👤</span> Profile</a>
+        <a href="#preferences"   class="snav-link"><span class="snav-icon">🌶️</span> Preferences</a>
+        <a href="#notifications" class="snav-link"><span class="snav-icon">🔔</span> Notifications</a>
+        <a href="#privacy"       class="snav-link"><span class="snav-icon">🔒</span> Privacy</a>
+        <hr class="snav-divider">
+        <a href="#danger"        class="snav-link" style="color:var(--error);"><span class="snav-icon">⚠️</span> Danger Zone</a>
+      </nav>
 
-      
-      <div class="settings-section" id="preferences">
-        <div class="section-title">Doubles Preferences</div>
-        <div class="section-desc">Customize how DoubleFinder shows you vendors</div>
-        <div class="field-group">
-          <label class="field-label">Default Pepper Level</label>
-          <div class="pepper-selector">
-            <button class="pepper-btn" onclick="setPepper(this)">No Pepper</button>
-            <button class="pepper-btn active" onclick="setPepper(this)">Slight</button>
-            <button class="pepper-btn" onclick="setPepper(this)">Slight Slight</button>
-            <button class="pepper-btn" onclick="setPepper(this)">Medium</button>
-            <button class="pepper-btn" onclick="setPepper(this)">Heavy</button>
-            <button class="pepper-btn" onclick="setPepper(this)">Extra Hot 🔥</button>
+     
+      <div class="settings-main">
+
+       
+        <div class="settings-section" id="profile">
+          <div class="section-head">
+            <div class="section-title"><span class="icon">👤</span> Profile Information</div>
+            <div class="section-desc">Update your public profile. Changes are saved locally to your device.</div>
           </div>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Search Radius</label>
-          <select id="radius">
-            <option value="1">1 km</option>
-            <option value="5" selected>5 km</option>
-            <option value="10">10 km</option>
-            <option value="25">25 km</option>
-            <option value="50">50 km — All of Trinidad</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Default Map View</label>
-          <select>
-            <option>Roadmap</option>
-            <option>Satellite</option>
-            <option>Terrain</option>
-          </select>
-        </div>
-        <div class="btn-row"><button class="btn-save" onclick="saveSection('Preferences saved!')">Save Preferences</button></div>
-      </div>
 
-     
-      <div class="settings-section" id="notifications">
-        <div class="section-title">Notifications</div>
-        <div class="section-desc">Control what updates you receive</div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Vendor Open Alerts</div><div class="toggle-desc">Get notified when your saved vendors open for the day</div></div>
-          <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">New Vendor Nearby</div><div class="toggle-desc">Alert when a new doubles vendor is added near you</div></div>
-          <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Weekly Leaderboard</div><div class="toggle-desc">Receive the weekly top vendor rankings digest</div></div>
-          <label class="toggle"><input type="checkbox"/><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Review Replies</div><div class="toggle-desc">Notify when someone replies to your review</div></div>
-          <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Promotional Updates</div><div class="toggle-desc">Special offers and DoubleFinder announcements</div></div>
-          <label class="toggle"><input type="checkbox"/><span class="slider"></span></label>
-        </div>
-        <div class="btn-row"><button class="btn-save" onclick="saveSection('Notification settings saved!')">Save</button></div>
-      </div>
+       
+          <div class="avatar-row">
+            <div class="avatar-lg" id="avatar-preview">🧑</div>
+            <div>
+              <label class="field-label" style="margin-bottom:0.5rem;">Choose Avatar</label>
+              <div class="avatar-options" id="avatar-options">
+                <div class="avatar-opt" onclick="setAvatar(this,'🧑')">🧑</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'👨‍🍳')">👨‍🍳</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'🧑‍🍳')">🧑‍🍳</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'🧔')">🧔</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'👩')">👩</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'🧕')">🧕</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'🤵')">🤵</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'👑')">👑</div>
+                <div class="avatar-opt" onclick="setAvatar(this,'🦁')">🦁</div>
+              </div>
+            </div>
+          </div>
 
-     
-      <div class="settings-section" id="privacy">
-        <div class="section-title">Privacy & Security</div>
-        <div class="section-desc">Manage your data and account security</div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Public Profile</div><div class="toggle-desc">Allow others to view your reviews and activity</div></div>
-          <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Show on Leaderboard</div><div class="toggle-desc">Display your name in public vendor rankings</div></div>
-          <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Location Tracking</div><div class="toggle-desc">Allow real-time location for nearby vendor features</div></div>
-          <label class="toggle"><input type="checkbox" checked/><span class="slider"></span></label>
-        </div>
-        <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--border)">
-          <div class="section-title" style="margin-bottom:0.3rem">Change Password</div>
-          <div class="field-group" style="margin-top:1rem"><label class="field-label">Current Password</label><input type="password" placeholder="••••••••"/></div>
           <div class="field-row">
-            <div class="field-group"><label class="field-label">New Password</label><input type="password" placeholder="••••••••"/></div>
-            <div class="field-group"><label class="field-label">Confirm New</label><input type="password" placeholder="••••••••"/></div>
+            <div class="field-group">
+              <label class="field-label">First Name</label>
+              <input type="text" id="fname" placeholder="John"/>
+              <div class="field-hint err" id="fname-err">Required</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Last Name</label>
+              <input type="text" id="lname" placeholder="Doe"/>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Username</label>
+            <input type="text" id="s-username" placeholder="doublesking99" autocomplete="username"/>
+            <div class="field-hint err" id="username-err">Must be at least 3 characters</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <input type="email" id="s-email" placeholder="you@mail.com" autocomplete="email"/>
+            <div class="field-hint err" id="email-err">Enter a valid email</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Bio <span style="font-weight:400;text-transform:none;letter-spacing:0;font-family:'DM Sans'"> — optional</span></label>
+            <textarea id="bio" placeholder="Tell the community about yourself…"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Area / Location</label>
+            <select id="location">
+              <option value="">Select area…</option>
+              <option value="pos">Port of Spain</option>
+              <option value="chaguanas">Chaguanas</option>
+              <option value="sanfernando">San Fernando</option>
+              <option value="arima">Arima</option>
+              <option value="tunapuna">Tunapuna</option>
+              <option value="curepe">Curepe</option>
+              <option value="diego-martin">Diego Martin</option>
+              <option value="maraval">Maraval</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-save" onclick="saveProfile()">Save Profile</button>
+            <button class="btn-outline" onclick="loadAll()">Reset</button>
           </div>
         </div>
-        <div class="btn-row"><button class="btn-save" onclick="saveSection('Privacy settings saved!')">Save Changes</button></div>
-      </div>
 
       
-      <div class="settings-section danger-section" id="danger">
-        <div class="section-title">Danger Zone</div>
-        <div class="section-desc">Permanent actions — proceed with caution</div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Clear All Favourites</div><div class="toggle-desc">Remove all saved vendors from your account</div></div>
-          <button class="btn-danger" onclick="clearFavs()">Clear</button>
+        <div class="settings-section" id="preferences">
+          <div class="section-head">
+            <div class="section-title"><span class="icon">🌶️</span> Doubles Preferences</div>
+            <div class="section-desc">Customize how DoubleFinder shows you vendors.</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Default Pepper Level</label>
+            <div class="pepper-selector" id="pepper-selector">
+              <button class="pepper-btn" onclick="setPepper(this)">No Pepper</button>
+              <button class="pepper-btn" onclick="setPepper(this)">Slight</button>
+              <button class="pepper-btn" onclick="setPepper(this)">Slight Slight</button>
+              <button class="pepper-btn" onclick="setPepper(this)">Medium</button>
+              <button class="pepper-btn" onclick="setPepper(this)">Heavy</button>
+              <button class="pepper-btn" onclick="setPepper(this)">Extra Hot 🔥</button>
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top:1.2rem;">
+            <label class="field-label">Search Radius</label>
+            <select id="radius">
+              <option value="1">1 km — Walking distance</option>
+              <option value="5">5 km</option>
+              <option value="10">10 km</option>
+              <option value="25">25 km</option>
+              <option value="50">50 km — All of Trinidad</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Default Map View</label>
+            <select id="map-view">
+              <option value="roadmap">Roadmap</option>
+              <option value="satellite">Satellite</option>
+              <option value="terrain">Terrain</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Sort Vendors By Default</label>
+            <select id="sort-default">
+              <option value="rating">Highest Rated</option>
+              <option value="distance">Nearest First</option>
+              <option value="open">Open Now</option>
+            </select>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-save" onclick="savePreferences()">Save Preferences</button>
+          </div>
         </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-title">Delete Account</div><div class="toggle-desc">Permanently delete your account and all data</div></div>
-          <button class="btn-danger" onclick="confirmDelete()">Delete Account</button>
+
+     
+        <div class="settings-section" id="notifications">
+          <div class="section-head">
+            <div class="section-title"><span class="icon">🔔</span> Notifications</div>
+            <div class="section-desc">Control what updates you receive. Stored locally on your device.</div>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Vendor Open Alerts</div>
+              <div class="toggle-desc">Get notified when your saved vendors open for the day</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="notif-open"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">New Vendor Nearby</div>
+              <div class="toggle-desc">Alert when a new doubles vendor is added near you</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="notif-nearby"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Weekly Leaderboard Digest</div>
+              <div class="toggle-desc">Receive the weekly top vendor rankings</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="notif-leaderboard"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Review Replies</div>
+              <div class="toggle-desc">Notify when someone replies to your review</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="notif-replies"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Promotional Updates</div>
+              <div class="toggle-desc">Special offers and DoubleFinder announcements</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="notif-promo"/><span class="slider"></span></label>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-save" onclick="saveNotifications()">Save</button>
+          </div>
         </div>
+
+  
+        <div class="settings-section" id="privacy">
+          <div class="section-head">
+            <div class="section-title"><span class="icon">🔒</span> Privacy &amp; Security</div>
+            <div class="section-desc">Manage your visibility and account security.</div>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Public Profile</div>
+              <div class="toggle-desc">Allow others to view your reviews and activity</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="priv-public"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Show on Leaderboard</div>
+              <div class="toggle-desc">Display your name in public vendor rankings</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="priv-leaderboard"/><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Location Tracking</div>
+              <div class="toggle-desc">Allow real-time location for nearby vendor features</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="priv-location"/><span class="slider"></span></label>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-save" onclick="savePrivacy()">Save Privacy Settings</button>
+          </div>
+
+          <hr class="inner-divider">
+
+          <div class="section-title" style="margin-bottom:1rem;">Change Password</div>
+          <div class="field-group">
+            <label class="field-label">Current Password</label>
+            <input type="password" id="pw-current" placeholder="••••••••" autocomplete="current-password"/>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">New Password</label>
+              <input type="password" id="pw-new" placeholder="••••••••" autocomplete="new-password" oninput="checkPwStrength()"/>
+              <div class="strength-wrap">
+                <div class="strength-bar"><div class="strength-fill" id="pw-strength-fill"></div></div>
+                <div class="strength-label" id="pw-strength-label">Enter a new password</div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Confirm New Password</label>
+              <input type="password" id="pw-confirm" placeholder="••••••••" autocomplete="new-password"/>
+              <div class="field-hint err" id="pw-confirm-err">Passwords do not match</div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-save" onclick="changePassword()">Update Password</button>
+          </div>
+        </div>
+
+        <div class="settings-section danger-section" id="danger">
+          <div class="section-head">
+            <div class="section-title"><span class="icon">⚠️</span> Danger Zone</div>
+            <div class="section-desc">Permanent, irreversible actions — proceed with caution.</div>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Clear Saved Vendors</div>
+              <div class="toggle-desc">Remove all vendors from your saved list</div>
+            </div>
+            <button class="btn-danger-sm" onclick="clearFavs()">Clear</button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Clear All Activity</div>
+              <div class="toggle-desc">Delete all your ratings, reviews, and comments</div>
+            </div>
+            <button class="btn-danger-sm" onclick="clearAllData()">Clear All</button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Delete Account</div>
+              <div class="toggle-desc">Permanently delete your account and every piece of data associated with it</div>
+            </div>
+            <button class="btn-danger-sm" onclick="confirmDelete()" style="background:rgba(192,57,43,0.2);border-color:rgba(192,57,43,0.5);">Delete Account</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
-  <script>
-    function loadProfile() {
-      const user = JSON.parse(localStorage.getItem('df_user') || 'null');
-      if (!user) { window.location.href = 'login.html'; return; }
-      const nameParts = (user.name || '').split(' ');
-      document.getElementById('fname').value = nameParts[0] || '';
-      document.getElementById('lname').value = nameParts.slice(1).join(' ') || '';
-      document.getElementById('s-username').value = user.username || '';
-      document.getElementById('s-email').value = user.email || '';
-    }
+<script>
+  const PREF_KEY   = 'df_prefs';
+  const NOTIF_KEY  = 'df_notifs';
+  const PRIV_KEY   = 'df_privacy';
 
-    function setPepper(btn) {
-      document.querySelectorAll('.pepper-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
+ 
+  const user = JSON.parse(localStorage.getItem('df_user') || 'null');
+  if (!user) { window.location.href = 'login.html'; }
 
-    function saveSection(msg) {
-      const user = JSON.parse(localStorage.getItem('df_user') || '{}');
-      const fname = document.getElementById('fname').value;
-      const lname = document.getElementById('lname').value;
-      user.name = (fname + ' ' + lname).trim();
-      user.username = document.getElementById('s-username').value;
-      user.email = document.getElementById('s-email').value;
-      localStorage.setItem('df_user', JSON.stringify(user));
-      showToast('✓ ' + msg);
-    }
 
-    function clearFavs() {
-      if (confirm('Remove all favourite vendors?')) {
-        localStorage.removeItem('df_favs');
-        showToast('Favourites cleared');
+  function loadAll() {
+    loadProfile();
+    loadPreferences();
+    loadNotifications();
+    loadPrivacy();
+  }
+
+  function loadProfile() {
+    const u = JSON.parse(localStorage.getItem('df_user') || '{}');
+    const nameParts = (u.name || '').split(' ');
+
+    document.getElementById('fname').value       = nameParts[0] || '';
+    document.getElementById('lname').value       = nameParts.slice(1).join(' ') || '';
+    document.getElementById('s-username').value  = u.username || '';
+    document.getElementById('s-email').value     = u.email || '';
+    document.getElementById('bio').value         = u.bio || '';
+
+   
+    document.getElementById('header-name').textContent  = u.name || u.username || 'User';
+    document.getElementById('header-email').textContent = u.email || '';
+
+   
+    const avatar = u.avatar || '🧑';
+    document.getElementById('avatar-preview').textContent = avatar;
+    document.getElementById('header-avatar').textContent  = (u.name || '?')[0].toUpperCase();
+    document.querySelectorAll('.avatar-opt').forEach(opt => {
+      opt.classList.toggle('selected', opt.textContent === avatar);
+    });
+
+
+    const locSel = document.getElementById('location');
+    if (u.location) {
+      for (const opt of locSel.options) {
+        if (opt.value === u.location) { opt.selected = true; break; }
       }
     }
-    function confirmDelete() {
-      if (confirm('Are you sure? This cannot be undone.')) logout();
-    }
-
-    function logout() {
-      localStorage.removeItem('df_user');
-      window.location.href = 'login.html';
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2800);
-    }
-
-    loadProfile();
-
-      if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.error('SW error:', err));
   }
-  </script>
+
+  function loadPreferences() {
+    const prefs = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
+
+  
+    const pepper = prefs.pepper || 'Slight';
+    document.querySelectorAll('.pepper-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim() === pepper);
+    });
+  
+    if (prefs.radius) {
+      const rs = document.getElementById('radius');
+      for (const o of rs.options) if (o.value === prefs.radius) { o.selected=true; break; }
+    }
+
+    if (prefs.mapView) {
+      const mv = document.getElementById('map-view');
+      for (const o of mv.options) if (o.value === prefs.mapView) { o.selected=true; break; }
+    }
+
+    if (prefs.sortDefault) {
+      const sd = document.getElementById('sort-default');
+      for (const o of sd.options) if (o.value === prefs.sortDefault) { o.selected=true; break; }
+    }
+  }
+
+  function loadNotifications() {
+    const notifs = JSON.parse(localStorage.getItem(NOTIF_KEY) || '{}');
+
+    document.getElementById('notif-open').checked        = notifs.open        !== undefined ? notifs.open        : true;
+    document.getElementById('notif-nearby').checked      = notifs.nearby      !== undefined ? notifs.nearby      : true;
+    document.getElementById('notif-leaderboard').checked = notifs.leaderboard !== undefined ? notifs.leaderboard : false;
+    document.getElementById('notif-replies').checked     = notifs.replies     !== undefined ? notifs.replies     : true;
+    document.getElementById('notif-promo').checked       = notifs.promo       !== undefined ? notifs.promo       : false;
+  }
+
+  function loadPrivacy() {
+    const priv = JSON.parse(localStorage.getItem(PRIV_KEY) || '{}');
+    document.getElementById('priv-public').checked      = priv.publicProfile !== undefined ? priv.publicProfile : true;
+    document.getElementById('priv-leaderboard').checked = priv.leaderboard   !== undefined ? priv.leaderboard   : true;
+    document.getElementById('priv-location').checked    = priv.location      !== undefined ? priv.location      : true;
+  }
+
+
+  function setAvatar(el, emoji) {
+    document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('avatar-preview').textContent = emoji;
+  }
+
+  function setPepper(btn) {
+    document.querySelectorAll('.pepper-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+
+  function saveProfile() {
+    clearFieldErrors();
+    const fname    = document.getElementById('fname').value.trim();
+    const lname    = document.getElementById('lname').value.trim();
+    const username = document.getElementById('s-username').value.trim();
+    const email    = document.getElementById('s-email').value.trim();
+    const bio      = document.getElementById('bio').value.trim();
+    const location = document.getElementById('location').value;
+    const avatar   = document.getElementById('avatar-preview').textContent;
+
+    let valid = true;
+    if (!fname) { showFieldErr('fname', 'fname-err'); valid = false; }
+    if (username.length < 3) { showFieldErr('s-username', 'username-err'); valid = false; }
+    if (!email.includes('@')) { showFieldErr('s-email', 'email-err'); valid = false; }
+    if (!valid) { showToast('⚠ Please fix the errors above', 'error'); return; }
+
+    const u = JSON.parse(localStorage.getItem('df_user') || '{}');
+    u.name     = (fname + ' ' + lname).trim();
+    u.username = username;
+    u.email    = email;
+    u.bio      = bio;
+    u.location = location;
+    u.avatar   = avatar;
+    localStorage.setItem('df_user', JSON.stringify(u));
+
+
+    document.getElementById('header-name').textContent  = u.name;
+    document.getElementById('header-email').textContent = u.email;
+    document.getElementById('header-avatar').textContent = u.name[0].toUpperCase();
+
+    showToast('✓ Profile updated!', 'success');
+  }
+
+  function savePreferences() {
+    const activePepper = document.querySelector('.pepper-btn.active');
+    const prefs = {
+      pepper:      activePepper ? activePepper.textContent.trim() : 'Slight',
+      radius:      document.getElementById('radius').value,
+      mapView:     document.getElementById('map-view').value,
+      sortDefault: document.getElementById('sort-default').value,
+    };
+    localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+    showToast('✓ Preferences saved!', 'success');
+  }
+
+
+  function saveNotifications() {
+    const notifs = {
+      open:        document.getElementById('notif-open').checked,
+      nearby:      document.getElementById('notif-nearby').checked,
+      leaderboard: document.getElementById('notif-leaderboard').checked,
+      replies:     document.getElementById('notif-replies').checked,
+      promo:       document.getElementById('notif-promo').checked,
+    };
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(notifs));
+    showToast('✓ Notification settings saved!', 'success');
+  }
+
+
+  function savePrivacy() {
+    const priv = {
+      publicProfile: document.getElementById('priv-public').checked,
+      leaderboard:   document.getElementById('priv-leaderboard').checked,
+      location:      document.getElementById('priv-location').checked,
+    };
+    localStorage.setItem(PRIV_KEY, JSON.stringify(priv));
+    showToast('✓ Privacy settings saved!', 'success');
+  }
+
+
+  function checkPwStrength() {
+    const p = document.getElementById('pw-new').value;
+    const fill  = document.getElementById('pw-strength-fill');
+    const label = document.getElementById('pw-strength-label');
+    let score = 0;
+    if (p.length >= 6)         score++;
+    if (p.length >= 10)        score++;
+    if (/[A-Z]/.test(p))       score++;
+    if (/[0-9]/.test(p))       score++;
+    if (/[^a-zA-Z0-9]/.test(p)) score++;
+    const pct    = (score / 5) * 100;
+    const colors = ['#C0392B','#E8820C','#F4A300','#27AE60','#27AE60'];
+    const labels = ['Too weak','Weak','Fair','Strong','Very strong'];
+    fill.style.width      = pct + '%';
+    fill.style.background = colors[Math.max(0, score - 1)];
+    label.textContent     = score === 0 ? 'Enter a new password' : labels[Math.max(0, score - 1)];
+    label.style.color     = score === 0 ? '#7A8C82' : colors[Math.max(0, score - 1)];
+  }
+
+  function changePassword() {
+    const curr    = document.getElementById('pw-current').value;
+    const newPw   = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+    const errEl   = document.getElementById('pw-confirm-err');
+    errEl.classList.remove('show');
+
+    if (!curr || !newPw) { showToast('⚠ Fill in all password fields', 'error'); return; }
+    if (newPw.length < 6) { showToast('⚠ New password must be at least 6 characters', 'error'); return; }
+    if (newPw !== confirm) {
+      errEl.classList.add('show');
+      document.getElementById('pw-confirm').classList.add('error');
+      return;
+    }
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value     = '';
+    document.getElementById('pw-confirm').value = '';
+    document.getElementById('pw-strength-fill').style.width = '0%';
+    document.getElementById('pw-strength-label').textContent = 'Enter a new password';
+    showToast('✓ Password updated!', 'success');
+  }
+
+
+  function clearFavs() {
+    if (!confirm('Remove all saved vendors? This cannot be undone.')) return;
+    localStorage.removeItem('df_saved');
+    localStorage.removeItem('df_vendor_names');
+    showToast('✓ Saved vendors cleared', 'success');
+  }
+
+  function clearAllData() {
+    if (!confirm('Clear ALL your reviews, ratings and comments? This cannot be undone.')) return;
+    ['df_saved','df_ratings','df_comments','df_statuses','df_vendor_names'].forEach(k => localStorage.removeItem(k));
+    showToast('✓ All activity data cleared', 'success');
+  }
+
+  function confirmDelete() {
+    if (!confirm('Permanently delete your account and all data? This CANNOT be undone.')) return;
+    ['df_user','df_saved','df_ratings','df_comments','df_statuses',
+     'df_vendor_names', PREF_KEY, NOTIF_KEY, PRIV_KEY].forEach(k => localStorage.removeItem(k));
+    window.location.href = 'login.html';
+  }
+
+  function logout() {
+    localStorage.removeItem('df_user');
+    window.location.href = 'login.html';
+  }
+
+
+  function showFieldErr(inputId, hintId) {
+    document.getElementById(inputId).classList.add('error');
+    document.getElementById(hintId).classList.add('show');
+  }
+  function clearFieldErrors() {
+    document.querySelectorAll('input.error').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.field-hint.err.show').forEach(el => el.classList.remove('show'));
+  }
+
+  let toastTimer;
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+
+  const snavLinks = document.querySelectorAll('.snav-link');
+  const sections  = document.querySelectorAll('.settings-section');
+  const observer  = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        snavLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.snav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+
+  loadAll();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(r => console.log('SW:', r.scope))
+      .catch(e => console.error('SW error:', e));
+  }
+</script>
 </body>
 </html>
+
 
