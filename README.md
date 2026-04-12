@@ -1,5 +1,6 @@
-DoubleFinder
+INFO 1601 - Project
 
+DoubleFinder
 Find the best doubles vendors near you in Trinidad live, rated, and mapped.
 
 DoubleFinder is a Progressive Web App (PWA) that helps users discover doubles vendors across Trinidad in real time. It features an interactive map, vendor leaderboard, user profiles with gamification, and full account management — all running client-side with no backend required.
