@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DoubleFinder – Find Doubles</title>
   <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#F4A300" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DoubleFinder" />
+  <link rel="apple-touch-icon" href="https://placehold.co/192x192/F4A300/0E1A14?text=DF" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAtb6i_Nu7bTFjBYaLbjMQxJWiosbrG9w&libraries=places" defer></script>
@@ -480,12 +486,14 @@ async function fetchFromOverpass(bbox) {
   var s = bbox[0], w = bbox[1], n = bbox[2], e = bbox[3];
 
 
-  if ((n - s) > 0.5 || (e - w) > 0.5) {
-    var midLat = (s + n) / 2, midLng = (w + e) / 2, r = 0.24;
+  // Only clamp if the user has zoomed way out. 1.0 degree covers all of Trinidad.
+  if ((n - s) > 1.0 || (e - w) > 1.0) {
+    var midLat = (s + n) / 2, midLng = (w + e) / 2, r = 0.5;
     s = midLat - r; w = midLng - r; n = midLat + r; e = midLng + r;
   }
 
-  
+  // Cast wide — most doubles vendors in OSM TT are tagged fast_food/street_vendor
+  // with no cuisine= tag. osmToVendor() below does the real filtering.
   var query = '[out:json][timeout:25];\n'
     + '(\n'
     + '  node["amenity"~"fast_food|restaurant|snack_bar|food_court|street_vendor|cafe|food_kiosk"](' + s + ',' + w + ',' + n + ',' + e + ');\n'
@@ -527,19 +535,19 @@ function osmToVendor(el) {
   const rawName = t.name || t['name:en'] || t['brand'] || null;
 
 
-  const nameLC = (rawName || '').toLowerCase();
+  const nameLC    = (rawName || '').toLowerCase();
   const cuisineLC = (t.cuisine || '').toLowerCase();
 
- 
-  const doublesName = /\bdoubles?\b|\bbara\b|\bchanna\b|\bpholourie\b/i;
+  // Word-boundary regex — "bara" won't match "Barbara", "double" won't match "Double-A Mart".
+  // This is the real gatekeeper since we fetch broadly from Overpass above.
+  const doublesRx = /\bdoubles?\b|\bbara\b|\bchanna\b|\bpholourie\b/i;
   const isDoublesRelated =
-    doublesName.test(rawName || '') ||
-    cuisineLC === 'trinidadian' ||
-    cuisineLC === 'doubles' ||
+    doublesRx.test(rawName || '') ||
+    cuisineLC === 'trinidadian' || cuisineLC === 'doubles' ||
     cuisineLC.split(';').map(s => s.trim()).some(c => c === 'trinidadian' || c === 'doubles') ||
     t['diet:trinidadian'] === 'yes';
 
-  
+  // Drop anything that isn't a doubles vendor
   if (!isDoublesRelated) return null;
 
   const name     = rawName || 'Doubles Vendor';
@@ -598,18 +606,59 @@ function capitalise(s) {
 
 
 function guessOpenNow(oh) {
-  if (!oh || oh === '24/7') return oh === '24/7';
+  if (!oh) return false;
+  if (oh === '24/7') return true;
   try {
-    const now  = new Date();
-    const day  = now.getDay(); 
-    const mins = now.getHours() * 60 + now.getMinutes();
+    const now     = new Date();
+    const dayIdx  = now.getDay(); // 0=Sun ... 6=Sat
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const DAY_MAP = { Mo:1, Tu:2, We:3, Th:4, Fr:5, Sa:6, Su:0 };
 
-    const match = oh.match(/(\d{2}):(\d{2})-(\d{2}):(\d{2})/);
-    if (!match) return true; 
-    const open  = parseInt(match[1]) * 60 + parseInt(match[2]);
-    const close = parseInt(match[3]) * 60 + parseInt(match[4]);
-    return mins >= open && mins <= close;
-  } catch { return true; }
+    // Expand "Mo-Fr" into [1,2,3,4,5]
+    function expandDays(token) {
+      token = token.trim();
+      if (token.includes('-')) {
+        const parts = token.split('-');
+        const from = DAY_MAP[parts[0]], to = DAY_MAP[parts[1]];
+        if (from === undefined || to === undefined) return [];
+        const days = [];
+        let cur = from;
+        for (let guard = 0; guard < 8; guard++) {
+          days.push(cur);
+          if (cur === to) break;
+          cur = (cur === 6) ? 0 : cur + 1;
+        }
+        return days;
+      }
+      return DAY_MAP[token] !== undefined ? [DAY_MAP[token]] : [];
+    }
+
+    // OSM hours can have multiple rules e.g. "Mo-Fr 06:00-14:00; Sa 06:00-12:00"
+    const rules = oh.split(';').map(r => r.trim()).filter(Boolean);
+    for (const rule of rules) {
+      const timeMatches = [...rule.matchAll(/(\d{2}):(\d{2})-(\d{2}):(\d{2})/g)];
+      if (!timeMatches.length) continue;
+
+      const dayPart = rule.replace(/(\d{2}:\d{2}-\d{2}:\d{2})/g, '').trim();
+      const ruleDays = dayPart
+        ? dayPart.split(',').flatMap(t => expandDays(t.trim()))
+        : [0,1,2,3,4,5,6];
+
+      if (!ruleDays.includes(dayIdx)) continue;
+
+      for (const m of timeMatches) {
+        const open  = parseInt(m[1]) * 60 + parseInt(m[2]);
+        const close = parseInt(m[3]) * 60 + parseInt(m[4]);
+        const isOpen = close < open
+          ? (nowMins >= open || nowMins <= close)  // overnight span
+          : (nowMins >= open && nowMins <= close);
+        if (isOpen) return true;
+      }
+    }
+    return false;
+  } catch(e) {
+    return false;
+  }
 }
 
 
@@ -675,7 +724,7 @@ async function refreshData() {
 
 function markerSvgUrl(v) {
   const color = v.openStatus === 'open' ? '#27AE60' : v.openStatus === 'closed' ? '#C0392B' : '#7A8C82';
-  const emoji = '🫓'; 
+  const emoji = '🫓'; // All results are doubles vendors
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
     <path d="M18 0C8 0 0 8 0 18c0 13.5 18 26 18 26S36 31.5 36 18C36 8 28 0 18 0z" fill="${color}" opacity="0.92"/>
     <circle cx="18" cy="18" r="10" fill="rgba(255,255,255,0.15)"/>
@@ -750,11 +799,20 @@ function getFiltered() {
   let list = vendors.filter(v =>
     !q || v.name.toLowerCase().includes(q) || v.location.toLowerCase().includes(q)
   );
-  if (currentFilter === 'open')   list = list.filter(v => v.openStatus === 'open');
-  if (currentFilter === 'rated')  list = list.filter(v => v.rating).sort((a,b) => b.rating - a.rating);
-  if (currentFilter === 'nearby') {
+
+  if (currentFilter === 'open') {
+    // Only show vendors confirmed open right now
+    list = list.filter(v => v.openStatus === 'open');
+
+  } else if (currentFilter === 'rated') {
+    // Rated vendors first, then fill in unrated alphabetically so tab is never empty
+    const rated   = list.filter(v => v.rating).sort((a,b) => b.rating - a.rating);
+    const unrated = list.filter(v => !v.rating).sort((a,b) => a.name.localeCompare(b.name));
+    list = [...rated, ...unrated];
+
+  } else if (currentFilter === 'nearby') {
     if (userLocation) {
-      list = [...list].sort((a,b) => (a.distance||9999) - (b.distance||9999));
+      list = [...list].sort((a,b) => (a.distance || 9999) - (b.distance || 9999));
     } else {
       toast('Enable location first for Nearest filter');
     }
@@ -772,20 +830,30 @@ function setFilter(f, el) {
 function filterList() { renderList(); }
 
 function renderList() {
-  const el   = document.getElementById('vendor-list');
-  const list = getFiltered();
-  const count= document.getElementById('sidebar-count');
-  count.textContent = `${list.length} vendor${list.length !== 1 ? 's' : ''} found`;
+  const el    = document.getElementById('vendor-list');
+  const list  = getFiltered();
+  const count = document.getElementById('sidebar-count');
+
+  if (currentFilter === 'open')   count.textContent = `${list.length} open right now`;
+  else if (currentFilter === 'rated')  count.textContent = `${list.length} vendor${list.length !== 1 ? 's' : ''} — rated first`;
+  else if (currentFilter === 'nearby') count.textContent = `${list.length} vendor${list.length !== 1 ? 's' : ''} — nearest first`;
+  else                                 count.textContent = `${list.length} vendor${list.length !== 1 ? 's' : ''} found`;
 
   if (!list.length) {
-    el.innerHTML = '<div class="no-results">No vendors match your search</div>';
+    const msg = currentFilter === 'open'
+      ? 'No vendors with confirmed open hours in this area'
+      : 'No vendors match your search';
+    el.innerHTML = `<div class="no-results">${msg}</div>`;
     return;
   }
 
   el.innerHTML = list.map(v => {
-    const distStr = v.distance !== null ? `${v.distance} km` : '';
+    const distStr   = v.distance !== null ? `${v.distance} km` : '';
     const ratingStr = v.rating ? `★ ${v.rating.toFixed(1)}` : '';
     const statusClass = v.openStatus;
+    const hoursBadge  = v.openingHours
+      ? `<span class="vc-source" style="color:var(--success);border-color:rgba(39,174,96,0.2);">🕐 Hours</span>`
+      : '';
     return `
     <div class="vendor-card${selectedId === v.id ? ' selected' : ''}" onclick="selectVendor('${v.id}')">
       <div class="vc-top">
@@ -794,8 +862,9 @@ function renderList() {
       </div>
       <div class="vc-loc">📍 ${v.location}</div>
       <div class="vc-meta">
-        ${ratingStr ? `<span class="vc-rating">${ratingStr}</span>` : ''}
-        ${distStr   ? `<span class="vc-dist">${distStr}</span>`     : ''}
+        ${ratingStr  ? `<span class="vc-rating">${ratingStr}</span>` : ''}
+        ${distStr    ? `<span class="vc-dist">${distStr}</span>`     : ''}
+        ${hoursBadge}
         <span class="vc-source">OSM</span>
       </div>
       <div class="vc-tags">${v.sells.map(s => `<span class="tag">${s}</span>`).join('')}</div>
@@ -1088,7 +1157,13 @@ function toast(msg) {
 
 
 window.addEventListener('load', initMap);
+
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(reg => console.log('SW registered:', reg.scope))
+    .catch(err => console.error('SW registration failed:', err));
+}
 </script>
 </body>
 </html>
-
