@@ -124,16 +124,12 @@
       <div class="profile-info">
         <h1 id="profile-name">Loading…</h1>
         <div class="handle" id="profile-handle">@username</div>
-        <div class="profile-tags">
-          <span class="tag">🌶️ Pepper Lover</span>
-          <span class="tag">🏆 Top Reviewer</span>
-          <span class="tag">📍 Port of Spain</span>
-        </div>
+        <div class="profile-tags" id="profile-tags"></div>
       </div>
       <div class="profile-stats">
         <div class="pstat"><div class="pstat-num" id="fav-count">0</div><div class="pstat-label">Favourites</div></div>
-        <div class="pstat"><div class="pstat-num">14</div><div class="pstat-label">Reviews</div></div>
-        <div class="pstat"><div class="pstat-num">3</div><div class="pstat-label">Badges</div></div>
+        <div class="pstat"><div class="pstat-num" id="review-count">0</div><div class="pstat-label">Reviews</div></div>
+        <div class="pstat"><div class="pstat-num" id="badge-count">0</div><div class="pstat-label">Badges</div></div>
       </div>
     </div>
   </div>
@@ -158,23 +154,13 @@
       
       <div id="tab-activity" style="display:none">
         <div class="section-label">Recent Activity</div>
-        <div class="activity-feed">
-          <div class="activity-item"><div class="activity-icon">⭐</div><div class="activity-text">You rated <strong>Chaguanas Doubles King</strong> 5 stars<div class="activity-time">2 hours ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon">❤️</div><div class="activity-text">You saved <strong>Curepe Doubles Express</strong> to favourites<div class="activity-time">Yesterday</div></div></div>
-          <div class="activity-item"><div class="activity-icon">💬</div><div class="activity-text">You commented on <strong>Sauce & Bara Central</strong>: "Best bara in POS!"<div class="activity-time">3 days ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon">📍</div><div class="activity-text">You checked in at <strong>Maraval Morning Stop</strong><div class="activity-time">Last week</div></div></div>
-          <div class="activity-item"><div class="activity-icon">🏆</div><div class="activity-text">You earned the <strong>Early Bird</strong> badge for checking in before 6AM<div class="activity-time">Last week</div></div></div>
-        </div>
+        <div class="activity-feed" id="activity-feed"></div>
       </div>
 
       
       <div id="tab-reviews" style="display:none">
         <div class="section-label">Your Reviews</div>
-        <div class="activity-feed">
-          <div class="activity-item"><div class="activity-icon">🌶️</div><div class="activity-text"><strong>Chaguanas Doubles King</strong> — ★★★★★<br>"Best doubles on the island, no cap. The channa hit different."<div class="activity-time">2 hours ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon">🫓</div><div class="activity-text"><strong>Sauce & Bara Central</strong> — ★★★★☆<br>"Bara could be a lil softer but the pepper mango make up for it."<div class="activity-time">3 days ago</div></div></div>
-          <div class="activity-item"><div class="activity-icon">☀️</div><div class="activity-text"><strong>Maraval Morning Stop</strong> — ★★★★★<br>"Always on time, always fresh. My morning ritual."<div class="activity-time">Last week</div></div></div>
-        </div>
+        <div class="activity-feed" id="reviews-feed"></div>
       </div>
     </div>
 
@@ -183,23 +169,16 @@
       <div class="sidebar-widget">
         <div class="widget-title">🧡 Doubles Level</div>
         <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
-          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem">Level 5 — Bara Boss</span>
-          <span style="font-size:0.8rem;color:var(--text-muted)">320 XP</span>
+          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem" id="level-label">Level 1 — Doubles Newbie</span>
+          <span style="font-size:0.8rem;color:var(--text-muted)" id="xp-label">0 XP</span>
         </div>
-        <div class="level-bar"><div class="level-fill" id="xp-bar" style="width:64%"></div></div>
-        <div class="level-label"><span>320 XP</span><span>500 XP to Level 6</span></div>
+        <div class="level-bar"><div class="level-fill" id="xp-bar" style="width:0%"></div></div>
+        <div class="level-label"><span id="xp-current">0 XP</span><span id="xp-next">50 XP to Level 2</span></div>
       </div>
 
       <div class="sidebar-widget">
         <div class="widget-title">🏅 Badges</div>
-        <div class="badge-grid">
-          <div class="badge-item earned"><span class="badge-emoji">🌅</span><div class="badge-name">Early Bird</div></div>
-          <div class="badge-item earned"><span class="badge-emoji">🔥</span><div class="badge-name">Pepper Head</div></div>
-          <div class="badge-item earned"><span class="badge-emoji">⭐</span><div class="badge-name">Reviewer</div></div>
-          <div class="badge-item locked"><span class="badge-emoji">👑</span><div class="badge-name">Legend</div></div>
-          <div class="badge-item locked"><span class="badge-emoji">🗺️</span><div class="badge-name">Explorer</div></div>
-          <div class="badge-item locked"><span class="badge-emoji">💯</span><div class="badge-name">Century</div></div>
-        </div>
+        <div class="badge-grid" id="badge-grid"></div>
       </div>
 
      
@@ -215,50 +194,208 @@
   </div>
 
   <script>
-    const VENDOR_DATA = {
-      1: { name:"Sauce & Bara Central", address:"Charlotte St, Port of Spain", rating:4.8, open:true },
-      2: { name:"Chaguanas Doubles King", address:"Montrose Rd, Chaguanas", rating:4.9, open:true },
-      4: { name:"Maraval Morning Stop", address:"Maraval Rd, Port of Spain", rating:4.7, open:true },
-      7: { name:"Curepe Doubles Express", address:"Eastern Main Rd, Curepe", rating:4.8, open:true },
-    };
+    
+    const KEY_USER     = 'df_user';
+    const KEY_SAVED    = 'df_saved';      
+    const KEY_RATINGS  = 'df_ratings';    
+    const KEY_COMMENTS = 'df_comments';   
+    const KEY_NAMES    = 'df_vendor_names'; 
+
     const AVATARS = ['😊','🧡','🌶️','🫓','⭐','👑'];
 
-    function loadProfile() {
-      const user = JSON.parse(localStorage.getItem('df_user') || 'null');
-      if (!user) { window.location.href = 'login.html'; return; }
-      document.getElementById('profile-name').textContent = user.name || user.username;
-      document.getElementById('profile-handle').textContent = '@' + (user.username || 'user');
-      document.getElementById('avatar-emoji').textContent = AVATARS[Math.floor(Math.random() * AVATARS.length)];
-      loadFavourites();
+    
+    const LEVELS = [
+      { xp:0,   name:'Doubles Newbie'  },
+      { xp:50,  name:'Bara Beginner'   },
+      { xp:120, name:'Channa Chaser'   },
+      { xp:220, name:'Pepper Pilgrim'  },
+      { xp:360, name:'Bara Boss'       },
+      { xp:550, name:'Doubles Legend'  },
+    ];
+
+   
+    const ALL_BADGES = [
+      { emoji:'⭐', name:'First Review',  desc:'Leave your first review',   check: (r,f,c) => Object.keys(r).length >= 1 },
+      { emoji:'🌶️', name:'Pepper Head',  desc:'Rate 3+ vendors',            check: (r,f,c) => Object.keys(r).length >= 3 },
+      { emoji:'❤️',  name:'Collector',    desc:'Save 3+ vendors',            check: (r,f,c) => f.length >= 3 },
+      { emoji:'💬', name:'Commenter',     desc:'Leave 3+ comments',          check: (r,f,c) => c >= 3 },
+      { emoji:'👑', name:'Legend',        desc:'Rate 10+ vendors',           check: (r,f,c) => Object.keys(r).length >= 10 },
+      { emoji:'💯', name:'Century',       desc:'Leave 10+ comments',         check: (r,f,c) => c >= 10 },
+    ];
+
+    function calcXP(ratings, favs, totalComments) {
+      return Object.keys(ratings).length * 20 + favs.length * 10 + totalComments * 15;
     }
 
-    function loadFavourites() {
-      const favs = JSON.parse(localStorage.getItem('df_favs') || '[]');
-      document.getElementById('fav-count').textContent = favs.length;
-      const grid = document.getElementById('fav-grid');
-      if (favs.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1;color:var(--text-muted);font-size:0.9rem;padding:2rem;text-align:center;background:var(--card-bg);border:1px dashed rgba(244,163,0,0.15);border-radius:4px">No favourites yet. <a href="map.html" style="color:var(--saffron)">Find doubles on the map →</a></div>`;
-        return;
+    function getLevel(xp) {
+      let lvl = 0;
+      for (let i = 0; i < LEVELS.length; i++) {
+        if (xp >= LEVELS[i].xp) lvl = i;
       }
-      grid.innerHTML = favs.map(id => {
-        const v = VENDOR_DATA[id] || { name:`Vendor #${id}`, address:'Trinidad', rating:4.5, open:true };
-        return `<div class="fav-card" onclick="window.location.href='map.html'">
-          <div class="fav-top"><div class="fav-name">${v.name}</div><div class="fav-rating">★ ${v.rating}</div></div>
-          <div class="fav-addr">${v.address}</div>
-          <div class="fav-footer">
-            <span class="${v.open ? 'open-tag' : 'closed-tag'}">${v.open ? '● Open' : '● Closed'}</span>
-            <button class="remove-fav" onclick="removeFav(event,${id})">Remove</button>
-          </div>
+      return lvl;
+    }
+
+    function starsHTML(n) {
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
+    }
+
+    function empty(icon, msg, linkHref, linkText) {
+      return `<div style="color:var(--text-muted);font-size:0.9rem;padding:2rem;text-align:center;background:var(--card-bg);border:1px dashed rgba(244,163,0,0.15);border-radius:4px">
+        ${icon} ${msg}${linkHref ? ` <a href="${linkHref}" style="color:var(--saffron)">${linkText} →</a>` : ''}
+      </div>`;
+    }
+
+    function loadProfile() {
+      const user = JSON.parse(localStorage.getItem(KEY_USER) || 'null');
+      if (!user) { window.location.href = 'login.html'; return; }
+
+      const savedIds    = JSON.parse(localStorage.getItem(KEY_SAVED)    || '[]');
+      const ratings     = JSON.parse(localStorage.getItem(KEY_RATINGS)  || '{}');
+      const comments    = JSON.parse(localStorage.getItem(KEY_COMMENTS) || '{}');
+      const vendorNames = JSON.parse(localStorage.getItem(KEY_NAMES)    || '{}');
+
+      
+      let totalComments = 0;
+      Object.values(comments).forEach(arr => { totalComments += arr.length; });
+
+     
+      document.getElementById('profile-name').textContent = user.name || user.username;
+      document.getElementById('profile-handle').textContent = '@' + (user.username || 'user');
+      
+      const avatarIdx = (user.username || '').split('').reduce((a,c) => a + c.charCodeAt(0), 0) % AVATARS.length;
+      document.getElementById('avatar-emoji').textContent = AVATARS[avatarIdx];
+
+      
+      const tagsEl = document.getElementById('profile-tags');
+      const tagList = [];
+      if (Object.keys(ratings).length >= 3) tagList.push('🌶️ Pepper Lover');
+      if (Object.keys(ratings).length >= 1) tagList.push('⭐ Reviewer');
+      if (savedIds.length >= 1)             tagList.push('❤️ Saver');
+      tagsEl.innerHTML = tagList.map(t => `<span class="tag">${t}</span>`).join('');
+
+      
+      const reviewCount = Object.keys(ratings).length;
+      document.getElementById('fav-count').textContent = savedIds.length;
+      document.getElementById('review-count').textContent = reviewCount;
+
+      
+      const xp = calcXP(ratings, savedIds, totalComments);
+      const lvlIdx = getLevel(xp);
+      const lvl = LEVELS[lvlIdx];
+      const nextLvl = LEVELS[lvlIdx + 1];
+      const xpIntoLevel = xp - lvl.xp;
+      const xpNeeded = nextLvl ? nextLvl.xp - lvl.xp : xpIntoLevel;
+      const pct = nextLvl ? Math.min(100, Math.round((xpIntoLevel / xpNeeded) * 100)) : 100;
+
+      document.getElementById('level-label').textContent = `Level ${lvlIdx + 1} — ${lvl.name}`;
+      document.getElementById('xp-label').textContent = `${xp} XP`;
+      document.getElementById('xp-bar').style.width = pct + '%';
+      document.getElementById('xp-current').textContent = `${xp} XP`;
+      document.getElementById('xp-next').textContent = nextLvl ? `${nextLvl.xp - xp} XP to Level ${lvlIdx + 2}` : 'Max Level!';
+
+      
+      const earnedBadges = ALL_BADGES.filter(b => b.check(ratings, savedIds, totalComments));
+      document.getElementById('badge-count').textContent = earnedBadges.length;
+
+      document.getElementById('badge-grid').innerHTML = ALL_BADGES.map(b => {
+        const earned = b.check(ratings, savedIds, totalComments);
+        return `<div class="badge-item ${earned ? 'earned' : 'locked'}" title="${b.desc}">
+          <span class="badge-emoji">${b.emoji}</span>
+          <div class="badge-name">${b.name}</div>
         </div>`;
       }).join('');
+
+      
+      const grid = document.getElementById('fav-grid');
+      if (savedIds.length === 0) {
+        grid.innerHTML = empty('🫓', 'No favourites yet.', 'map.html', 'Find doubles on the map');
+      } else {
+        grid.innerHTML = savedIds.map(id => {
+          const name   = vendorNames[id] || `Vendor #${id}`;
+          const rating = ratings[id] ? starsHTML(ratings[id]) : '—';
+          const myComments = (comments[id] || []).length;
+          return `<div class="fav-card" onclick="window.location.href='map.html'">
+            <div class="fav-top">
+              <div class="fav-name">${name}</div>
+              <div class="fav-rating">${rating}</div>
+            </div>
+            <div class="fav-addr">${myComments} comment${myComments !== 1 ? 's' : ''} from you</div>
+            <div class="fav-footer">
+              <span class="open-tag">● Saved</span>
+              <button class="remove-fav" onclick="removeFav(event,'${id}')">Remove</button>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      
+      const reviewsFeed = document.getElementById('reviews-feed');
+      const ratingEntries = Object.entries(ratings);
+      if (ratingEntries.length === 0) {
+        reviewsFeed.innerHTML = empty('⭐', 'No reviews yet.', 'map.html', 'Rate a vendor on the map');
+      } else {
+        reviewsFeed.innerHTML = ratingEntries.map(([id, stars]) => {
+          const name = vendorNames[id] || `Vendor #${id}`;
+          const myComments = comments[id] || [];
+          const latestComment = myComments[0];
+          return `<div class="activity-item">
+            <div class="activity-icon">🌶️</div>
+            <div class="activity-text">
+              <strong>${name}</strong> — ${starsHTML(stars)}
+              ${latestComment ? `<br><span style="font-style:italic;color:rgba(255,248,236,0.65)">"${latestComment.text}"</span>` : ''}
+              <div class="activity-time">${myComments.length} comment${myComments.length !== 1 ? 's' : ''}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      
+      const activityFeed = document.getElementById('activity-feed');
+      const activityItems = [];
+
+    
+      Object.entries(ratings).forEach(([id, stars]) => {
+        const name = vendorNames[id] || `Vendor #${id}`;
+        activityItems.push({ icon:'⭐', html:`You rated <strong>${name}</strong> ${stars} star${stars !== 1 ? 's' : ''}` });
+      });
+
+      
+      Object.entries(comments).forEach(([id, arr]) => {
+        const name = vendorNames[id] || `Vendor #${id}`;
+        arr.forEach(c => {
+          activityItems.push({ icon:'💬', html:`You commented on <strong>${name}</strong>: "${c.text}"` });
+        });
+      });
+
+    
+      savedIds.forEach(id => {
+        const name = vendorNames[id] || `Vendor #${id}`;
+        activityItems.push({ icon:'❤️', html:`You saved <strong>${name}</strong> to favourites` });
+      });
+
+      
+      earnedBadges.forEach(b => {
+        activityItems.push({ icon:'🏅', html:`You earned the <strong>${b.name}</strong> badge` });
+      });
+
+      if (activityItems.length === 0) {
+        activityFeed.innerHTML = empty('📍', 'No activity yet.', 'map.html', 'Start exploring');
+      } else {
+        activityFeed.innerHTML = activityItems.map(a =>
+          `<div class="activity-item">
+            <div class="activity-icon">${a.icon}</div>
+            <div class="activity-text">${a.html}</div>
+          </div>`
+        ).join('');
+      }
     }
 
     function removeFav(e, id) {
       e.stopPropagation();
-      let favs = JSON.parse(localStorage.getItem('df_favs') || '[]');
-      favs = favs.filter(f => f !== id);
-      localStorage.setItem('df_favs', JSON.stringify(favs));
-      loadFavourites();
+      let saved = JSON.parse(localStorage.getItem(KEY_SAVED) || '[]');
+      saved = saved.filter(f => f !== id);
+      localStorage.setItem(KEY_SAVED, JSON.stringify(saved));
+      loadProfile();
     }
 
     function showTab(tab, el) {
@@ -270,17 +407,17 @@
     }
 
     function logout() {
-      localStorage.removeItem('df_user');
+      localStorage.removeItem(KEY_USER);
       window.location.href = 'login.html';
     }
 
     loadProfile();
 
-      if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.error('SW error:', err));
-  }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.error('SW error:', err));
+    }
   </script>
 </body>
 </html>
