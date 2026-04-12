@@ -314,8 +314,7 @@
     <ul id="nav-menu">
       <li><a href="map.html">Find Doubles</a></li>
       <li><a href="leaderboard.html">Leaderboard</a></li>
-      <li><a href="login.html">Log In</a></li>
-      <li><a href="register.html" class="btn-nav">Sign Up</a></li>
+      <li id="nav-auth-links"></li>
     </ul>
   </nav>
 
@@ -448,11 +447,24 @@
     function toggleMenu() {
       document.getElementById('nav-menu').classList.toggle('open');
     }
+
+   
+    const dfUser = JSON.parse(localStorage.getItem('df_user') || 'null');
+    const authLinks = document.getElementById('nav-auth-links');
+    if (dfUser) {
+      authLinks.innerHTML = `
+        <a href="profile.html" style="color:var(--saffron)">👤 ${dfUser.username || dfUser.name}</a>`;
+    } else {
+      authLinks.innerHTML = `
+        <a href="login.html">Log In</a>
+        </li><li><a href="register.html" class="btn-nav">Sign Up</a>`;
+    }
+
     if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.error('SW error:', err));
-  }
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.error('SW error:', err));
+    }
   </script>
 </body>
 </html>
