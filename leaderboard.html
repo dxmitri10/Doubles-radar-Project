@@ -269,8 +269,7 @@
     <ul>
       <li><a href="map.html">Map</a></li>
       <li><a href="leaderboard.html" class="active">Leaderboard</a></li>
-      <li><a href="profile.html">Profile</a></li>
-      <li><a href="login.html" class="btn-nav">Log In</a></li>
+      <li id="nav-auth"></li>
     </ul>
   </nav>
 
@@ -448,7 +447,7 @@ out body;`;
         const elements = data.elements || [];
 
         setLoadingText(`Processing ${elements.length} results…`);
-        await new Promise(r => setTimeout(r, 200)); // let UI breathe
+        await new Promise(r => setTimeout(r, 200)); 
 
         allVendors = elements.map(parseNode).filter(v => v.isDoubles);
 
@@ -621,8 +620,19 @@ out body;`;
 
 
     loadData();
-    
-      if ('serviceWorker' in navigator) {
+
+  
+    (function() {
+      const u = JSON.parse(localStorage.getItem('df_user') || 'null');
+      const el = document.getElementById('nav-auth');
+      if (u) {
+        el.innerHTML = `<a href="profile.html" style="color:var(--saffron)">👤 ${u.username || u.name}</a>`;
+      } else {
+        el.innerHTML = `<a href="login.html" class="btn-nav">Log In</a>`;
+      }
+    })();
+
+    if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
       .then(reg => console.log('SW registered:', reg.scope))
       .catch(err => console.error('SW error:', err));
@@ -630,4 +640,5 @@ out body;`;
   </script>
 </body>
 </html>
+
 
