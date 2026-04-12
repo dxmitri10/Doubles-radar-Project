@@ -355,11 +355,11 @@
 
 <nav>
   <a href="index.html" class="logo">Double<span>Finder</span></a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="nav-links">
     <li><a href="map.html" class="active">Find Doubles</a></li>
     <li><a href="leaderboard.html">Leaderboard</a></li>
-    <li><a href="login.html">Log In</a></li>
-    <li><a href="register.html" class="btn-sm">Sign Up</a></li>
+    <li id="nav-auth-1"><a href="login.html">Log In</a></li>
+    <li id="nav-auth-2"><a href="register.html" class="btn-sm">Sign Up</a></li>
   </ul>
 </nav>
 
@@ -412,6 +412,17 @@
 <div id="toast"></div>
 
 <script>
+
+
+(function() {
+  const user = JSON.parse(localStorage.getItem('df_user') || 'null');
+  if (user) {
+    document.getElementById('nav-auth-1').innerHTML =
+      `<a href="profile.html">👤 ${user.name ? user.name.split(' ')[0] : 'Profile'}</a>`;
+    document.getElementById('nav-auth-2').innerHTML =
+      `<a href="profile.html" class="btn-sm">My Profile</a>`;
+  }
+})();
 
 let map, userMarker = null, userLocation = null;
 let currentFilter = 'all';
@@ -627,7 +638,7 @@ async function loadVendors(bbox) {
     const data = await fetchFromOverpass(b);
     const parsed = data.elements.map(osmToVendor);
 
-    // Apply user-saved data
+    
     parsed.forEach(v => {
       if (userComments[v.id])  v.comments    = userComments[v.id];
       if (userRatings[v.id])   v.userRating  = userRatings[v.id];
@@ -1000,6 +1011,10 @@ function rateVendor(id, n) {
   v.numRatings = cnt + 1;
   userRatings[id] = n;
   localStorage.setItem('df_ratings', JSON.stringify(userRatings));
+  // Store name so profile can display it
+  const names = JSON.parse(localStorage.getItem('df_vendor_names') || '{}');
+  names[id] = v.name;
+  localStorage.setItem('df_vendor_names', JSON.stringify(names));
   openPanel(v);
   renderList();
   toast(`Rated ${n}★ — thanks! You earned +15 pts`);
@@ -1016,6 +1031,10 @@ function postComment(id) {
   if (!userComments[id]) userComments[id] = [];
   userComments[id].unshift(comment);
   localStorage.setItem('df_comments', JSON.stringify(userComments));
+  
+  const names = JSON.parse(localStorage.getItem('df_vendor_names') || '{}');
+  names[id] = v.name;
+  localStorage.setItem('df_vendor_names', JSON.stringify(names));
   input.value = '';
   document.getElementById('comment-list').innerHTML = v.comments.map(c => `
     <div class="comment">
@@ -1035,6 +1054,15 @@ function toggleSave() {
   if (idx === -1) { savedIds.push(selectedId); toast('Vendor saved! ♥'); }
   else            { savedIds.splice(idx, 1);    toast('Removed from saved'); }
   localStorage.setItem('df_saved', JSON.stringify(savedIds));
+
+  
+  const v = vendors.find(x => x.id === selectedId);
+  if (v) {
+    const names = JSON.parse(localStorage.getItem('df_vendor_names') || '{}');
+    names[selectedId] = v.name;
+    localStorage.setItem('df_vendor_names', JSON.stringify(names));
+  }
+
   const btn    = document.getElementById('btn-save');
   const isSaved = savedIds.includes(selectedId);
   btn.textContent = isSaved ? '♥ Saved' : '♡ Save';
@@ -1078,7 +1106,7 @@ function locateMe() {
     map.setZoom(14);
     toast('📍 Located you!');
 
-    // Recalculate distances for all loaded vendors
+    
     vendors.forEach(v => {
       const R = 6371;
       const dLat = (v.lat - userLocation.lat) * Math.PI / 180;
